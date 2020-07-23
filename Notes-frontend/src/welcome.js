@@ -14,15 +14,16 @@ class Form{
         p.append(p_label)
 
         let input = ce("input");
+        input.id = label
         input.className= "w3-input w3-border";
         input.type = form_type;
         input.placeholder = placeholder;
+        
 
         form_inputs.prepend(p, input)
     }
 
-    static load(navbar_btn, title, form_items, btn_val, listener){
-        
+    static load(title, form_items, btn_val, listener = null){
         nav_modal.style.display="block"
 
         const form_title = qs("#form-title")
@@ -38,11 +39,11 @@ class Form{
         const submit_btn = qs("#submit-btn")
         submit_btn.value = btn_val;
 
+
         if (!form.getAttribute('listener')){
             form.setAttribute("listener", true)
         } else{
-            form.setAttribute("listener", true)
-            form.removeEventListener("submit", listener)
+            clear_Listener("submit", listener)
         }
         // !form.getAttribute('listener') ? form.setAttribute("listener", true): form.removeEventListener();
     }
@@ -57,7 +58,7 @@ class Signup_Form extends Form{
     static form_items = {
         "password":{
             "Password Confirmation": "Confirm your Password",
-            "Password": "Your Password"
+            "Password": "Your New Password"
         } ,
         "text":{
             "Email": "Your Email!",
@@ -83,7 +84,8 @@ class Signup_Form extends Form{
                 const auth_token = token["auth_token"]
                 if (auth_token){
                     localStorage.setItem('token', auth_token);
-                    //load_homepage()
+                    clear_Listener("submit", Signup_Form.listener);
+                    Home.load();
                 } else {
                     console.log("Signup")
                     form.reset()
@@ -91,7 +93,7 @@ class Signup_Form extends Form{
             })
     }
     static load(){
-        Form.load(this.navbar_btn, this.title, this.form_items, this.btn_val, Login_Form.listener);
+        Form.load(this.title, this.form_items, this.btn_val, Login_Form.listener);
         form.addEventListener("submit", this.listener)
     }
 }
@@ -125,7 +127,8 @@ class Login_Form extends Form{
                 const auth_token = token["auth_token"]
                 if (auth_token){
                     localStorage.setItem('token', auth_token);
-                    debugger
+                    clear_Listener("submit", Login_Form.listener);
+                    Home.load()
                 } else {
                     console.log("Login")
                     form.reset();
@@ -134,7 +137,7 @@ class Login_Form extends Form{
     }
 
     static load(){
-        Form.load(this.navbar_btn, this.title, this.form_items, this.btn_val, Signup_Form.listener);
+        Form.load(this.title, this.form_items, this.btn_val, Signup_Form.listener);
         form.addEventListener("submit", this.listener)
     }
 }

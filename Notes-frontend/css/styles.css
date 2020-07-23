@@ -3,3 +3,9 @@
   }
 body {font-family: "Lato", sans-serif}
 .mySlides {display: none}
+#new-note-btn{
+  z-index: 9999998;
+  position: absolute;
+  bottom: 9%;
+  left: 4%;
+}
