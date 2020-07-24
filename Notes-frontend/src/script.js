@@ -15,7 +15,6 @@ const load_editor = () => {
       modules: {
           toolbar: toolbarOptions
       },
-      scrollingContainer: '#scrolling-container', 
       placeholder: '...',
       theme: 'snow'  // or 'bubble'
   })

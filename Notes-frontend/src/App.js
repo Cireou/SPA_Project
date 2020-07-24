@@ -1,7 +1,7 @@
 const qs = (item) => document.querySelector(item);
 const ce = (item) => document.createElement(item);
 
-
+const block_1 = qs("#block-1");
 const reqObj = (method, body_args, auth_token = null) =>{
 
     let ret_Obj = {

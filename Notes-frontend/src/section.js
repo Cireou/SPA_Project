@@ -10,7 +10,7 @@ class Section{
 
     delete_listener(){
         fetch(sections_url + `/${this.id}`,reqObj("DELETE", null, localStorage.getItem("token")))
-        .then(resp => (Section.load_sidebar(this.topic)))
+        .then(resp => {Section.load_sidebar(this.topic)})
     }
 
     edit_listener(){
@@ -18,32 +18,68 @@ class Section{
     }
 
     to_html(){
+        const contrast = getContrast(this.topic.color);
+
         const li = ce("li");
         li.id = `${this.topic.title}-section-${this.id}`;
-        
-        const contrast = getContrast(this.topic.color);
         li.className = `w3-display-container w3-hover-${(contrast == "white") ? "black" : "white"}`;
-        li.innerText = this.title;
         li.style.backgroundColor = `${add_opacity(this.topic.color)}`
+        li.innerHTML = `<span class = "title">${this.title}</span>
+                        <span class = "w3-button w3-transparent w3-display-right">×</span>`;
+        debugger
+        li.querySelector(".title").addEventListener("click", () => {
+            Section.load_sidebar(this.topic, this)
+        })
 
-        const i = ce("i");
-        i.className = "fa fa-pencil w3-button w3-transparent"
-
-        const span = ce("span");
-        span.className = "w3-button w3-transparent w3-display-right";
-        span.innerText = "×";
-        span.addEventListener("click", () => {
+        li.querySelector(".w3-button").addEventListener("click", () => {
             this.delete_listener()
         })
-        
-        li.append(i,span);
         return li;
     }
 
-    static load_sidebar(topic, default_sidebar = true){
-        const opacity_color = add_opacity(topic.color);
+    load_note(){
+        const block1 = qs("#block-1");
+        const container = ce("div");
+        container.id = "cards-container"
+        container.style = "margin-left:200px";
+        container.className = "w3-padding-large"
 
+        container.innerHTML = `
+            <div class="w3-card-4">
+
+                <header class="w3-container w3-blue">
+                    <h1 contentEditable = true>${this.title}</h1>
+                </header>
+            
+                <div class="w3-container">
+                    <div id = "editor-container">
+                    </div>
+                </div>
+            
+                <div class="w3-container">
+                    <button> Save Changes! </button>
+                </div>
+            
+            </div>
+        `
+        block1.append(container)           
+        load_editor()    
+    }
+
+    static create_listener(topic){
+        const new_section = new Section("New Section", 9999, topic);
+        qs("#section-list").append(new_section.to_html)
+
+    }
+
+    static load_sidebar(topic, target_section = null){
+        const opacity_color = add_opacity(topic.color);
         const sidebar= qs("#sidebar");
+
+        sidebar.innerText = "";
+        const child = block_1.children[1];
+        if (child){block_1.removeChild(child)}
+
         sidebar.className = "w3-sidebar w3-bar-block"
         sidebar.style = `display: block; background-color: ${opacity_color}`;
         sidebar.innerHTML = ""
@@ -69,13 +105,18 @@ class Section{
             const ul = qs("#section-list");
             for (const section of req_topic.sections){
                 let new_section = new Section(section.title, section.id, topic);
+                (!target_section && section == req_topic.sections[0]) ? target_section = new_section : false;
                 ul.append(new_section.to_html());
-            }
-            const first_section = qs("#section-list").children[0];
-            (!!first_section && default_sidebar) ? 
-                first_section.style.backgroundColor = invert(topic.color) : 
-                false;
-            })
+                if (section.id == target_section.id){
+                    const section_HTML = qs(`#${topic.title}-section-${section.id}`);
+                    section_HTML.style.backgroundColor = invert(topic.color);
+                    section_HTML.style.color = getContrast(invert(topic.color));
+                    target_section.load_note()
+                }
+            }          
+        })
+        
+            
     }
 
     static load(topic){
