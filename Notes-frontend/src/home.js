@@ -1,23 +1,33 @@
 const topics_url = "http://localhost:3000/topics"
 
 class Card{
-    constructor(id, title, user = null){
+    constructor(id, color, title, user = null){
         this.id = id;
+        this.color = color
         this.title = title;
         this.user = user;
     }
 
+    data(){
+        return {
+            topic:{
+                title: this.title,
+                color: this.color
+            }
+        }
+    }
     to_html(){
         const third = ce("div");
         third.className = "w3-third w3-padding-large";
 
-
-        third.innerHTML = ` <div class="w3-card-4 w3-dark-grey w3-hover-shadow w3-center w3-round-xlarge" style="height: 350px; max-width: 3500px;">
+        third.innerHTML = ` <div id = "card-cont-${this.id}" class="w3-card-4 w3-hover-shadow w3-center w3-round-xlarge" 
+                                style="height: 350px; max-width: 3500px; background-color:${this.color}; color: ${getContrast(this.color)}">
                                 <br><br><br>
-                                <div class="w3-container w3-center ">
+                                <div class="w3-container w3-center">
                                     <a href="#" id = "card-title-${this.id}" class="w3-xxlarge"></a>
                                 </div>
-                                <div class="w3-container w3-center">
+                                <br> <br> <br>
+                                <div id = "card-${this.id}-btns" class="w3-container w3-center">
                                     <div class="w3-row w3-padding-16">
                                         <div class="w3-half ">
                                             <h2>
@@ -33,13 +43,44 @@ class Card{
                                 </div>
                             </div>`
         third.querySelector(`#card-title-${this.id}`).innerText = this.title;
-        third.querySelector(`#card-edit-${this.id}`).addEventListener("click", this.edit_loader.bind(this))
+        third.querySelector(`#card-edit-${this.id}`).addEventListener("click", () => {this.edit_loader(third.children[0])})
         third.querySelector(`#card-delete-${this.id}`).addEventListener("click", this.delete_loader.bind(this))
         return third;
     }
 
-    edit_loader(){
-        debugger
+    edit_loader(card_container){
+        qs(`#card-title-${this.id}`).contentEditable = "true";
+        qs(`#card-${this.id}-btns`).style.display = "none";
+
+        ce 
+        const new_HTML = `
+            <div id = "temp-vals">
+                Choose a New Color: <input id='colorpicker-edit'>
+                <button id = "card-edit-btn" 
+                    class="w3-button w3-block w3-teal w3-padding-16 w3-section w3-center"> 
+                    Update!
+                </button>
+            </div>
+        `
+        card_container.innerHTML += new_HTML
+        $("#colorpicker-edit").spectrum({
+            showPaletteOnly: true,
+            togglePaletteOnly: true,
+            togglePaletteMoreText: 'more',
+            togglePaletteLessText: 'less',
+            type: "color",
+            allowEmpty: "false"
+          });
+        qs("#card-edit-btn").addEventListener("click",  () => {
+            this.title = qs(`#card-title-${this.id}`).innerText;
+            this.color = qs(".sp-preview-inner").style.backgroundColor;
+            fetch(topics_url + `/${this.id}`, reqObj("PATCH", this.data(), localStorage.getItem("token")))
+            .then(resp => resp.json())
+            .then(new_items => {
+                Home.load_cards(qs("#cards-container"), card_container);
+            })
+        })
+        
     }
 
     delete_loader(){
@@ -99,69 +140,66 @@ class EditForm extends Form{
     }
 }
 
+class New_Note_Modal{
+    static data(){ 
+        return {
+            topic:{
+                title: qs("#new-topic-title").innerText,
+                color: qs(".sp-preview-inner").style.backgroundColor
+            }
+        }
+    }
+    static color_listener(){
+        const color_rbg = qs(".sp-preview-inner").style.backgroundColor
+        let modal_card = qs("#note-modal-card");
+        modal_card.style.backgroundColor = `${color_rbg}`;
+        modal_card.style.color = `${getContrast(color_rbg)}`
+    }
+
+    static submit_listener(){
+        fetch(topics_url, reqObj("POST", New_Note_Modal.data(), localStorage.getItem("token")))
+        .then(resp => resp.json())
+        .then(new_topic => {
+            qs('#note-modal').style.display = "none";
+            Home.load_cards(qs("#cards-container"));
+        })
+    }
+    static add_listeners(){
+        qs(".sp-choose").addEventListener("click", this.color_listener)
+        qs("#note-submit").addEventListener("click", this.submit_listener)
+    }
+}
+
 class Home{
     
-    static create_user_menu(){
-        if (qs("#user_btn")){
-            qs("#user_btn").style.display = "block";
-            return;
+    static load_sidebar() {
+        const sidebar= qs("#sidebar");
+        sidebar.style.display = "block";
+        sidebar.innerHTML += `<div><a href="#" class="w3-bar-item w3-button w3-hover-light-blue"> 
+                                    <div class="w3-container w3-center ">
+                                        <h3> Home</h3>
+                                    </div>
+                              </a>
+                              <a href="#" class="w3-bar-item w3-button w3-indigo w3-hover-indigo w3-hover-light-blue">
+                                    <div class="w3-container w3-center ">
+                                        <h3> My Notes</h3>
+                                    </div>
+                                </a>
+                            <a href="#" class="w3-bar-item w3-button w3-hover-light-blue">
+                                
+                                <div class="w3-container w3-center ">
+                                    <h3> Shared Notes</h3>
+                                    </div>
+                            </a>
+                            <button class="create-btn w3-button w3-xlarge w3-black w3-round-large">+ Create Note</button></div>`
+        qs(".create-btn").onclick = () => {
+            qs('#note-modal').style.display = 'block';
+            New_Note_Modal.add_listeners();
         }
 
-        const right_nav = qs("#right-nav");
-        
-        right_nav.innerHTML += `
-        <div id = "user-btn" class="w3-dropdown-hover w3-hide-small w3-right">
-            <button class="w3-padding-large w3-button" title="User Settings"> <i class="fa fa-user"></i> <i class="fa fa-caret-down"></i> </button> 
-            <div class="w3-dropdown-content w3-bar-block" style="right:0">
-                <div id = "edit-prof" class="w3-bar-item w3-button w3-grey" >Edit Profile</div>
-                <div id= "logout" class="w3-bar-item w3-button w3-grey">Logout</div>
-            </div>
-        </div>`
-
-        qs("#edit-prof").addEventListener("click", () =>{
-            EditForm.load()
-        })
-        
-
-        qs("#logout").addEventListener("click", () => {
-            localStorage.clear();
-            Home.hide();
-        })
     }
 
-    static load_sidebar() {
-        const block1 = qs("#block-1");
-        block1.innerHTML += `<div id = "sidebar" class="w3-sidebar w3-bar-block w3-blue" style="width:200px">
-            <a href="#" class="w3-bar-item w3-button w3-hover-light-blue"> 
-
-                <div class="w3-container w3-center ">
-                <h3> Home</h3>
-                </div>
-                </a>
-            
-            </a>
-            <a href="#" class="w3-bar-item w3-button w3-indigo w3-hover-indigo w3-hover-light-blue">
-                
-                <div class="w3-container w3-center ">
-                    <h3> My Notes</h3>
-                    </div>
-            </a>
-            <a href="#" class="w3-bar-item w3-button w3-hover-light-blue">
-                
-                <div class="w3-container w3-center ">
-                    <h3> Shared Notes</h3>
-                    </div>
-            </a>
-        </div>`
-
-        const new_note_btn = ce("button");
-        new_note_btn.id = "new-note-btn";
-        new_note_btn.className = "w3-button w3-xlarge w3-black w3-round-large"    
-        new_note_btn.innerText = "+ Create Note"
-        qs("#sidebar").append(new_note_btn);
-    }
-
-    static load_cards(container_arg){
+    static load_cards(container_arg, scroll_to_val = null){
         container_arg.innerText = "";
         fetch(users_url, reqObj("GET",null, localStorage.getItem("token")))
         .then(resp => resp.json())
@@ -172,11 +210,13 @@ class Home{
                 row_div.style = "margin:0 -16px"
                 for (let j = 0; (j + i < user_info.topics.length && j < 3); j++){
                     let card_info = user_info.topics[i + j];
-                    let new_card = new Card(card_info.id, card_info.title, null)
+                    let new_card = new Card(card_info.id, card_info.color, card_info.title, null)
                     row_div.append(new_card.to_html())
                 }
                 container_arg.append(row_div);
             }
+
+            (scroll_to_val) ? qs(`#${scroll_to_val.id}`).scrollIntoView() : true;
         })
     }
 
@@ -200,21 +240,24 @@ class Home{
 
 
     static load(){
-        qs("#form-modal").style.display='none'
-        qs("#signup-btn").style.display='none'
-        qs("#login-btn").style.display='none'
-        this.create_user_menu();
-        this.load_sidebar();
-        this.load_grid();
+        UserMenu.create(Home)
+        Home.load_sidebar();
+        Home.load_grid();
     }
 
     static hide(){
-        qs("#sidebar").style.display= "none"
-        qs("#grid").style.display = "none"
-        qs("#user-btn").style.display = "none"
-        clear_Listener("submit", EditForm.listener)
+        const sidebar = qs("#sidebar")
+        sidebar.removeChild(sidebar.children[0]);
+        sidebar.style.display = "none";
 
-        qs("#signup-btn").style.display= "block"
-        qs("#login-btn").style.display= "block"
+        qs("#grid").remove()
+        qs("#user-btn").remove()
+        clear_Listener("submit", EditForm.listener)
+    }
+
+    static redirect(redirect_fn){
+        this.hide()
+        redirect_fn();
     }
 }
+

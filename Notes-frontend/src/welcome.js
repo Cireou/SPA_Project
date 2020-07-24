@@ -35,7 +35,7 @@ class Form{
                 this.generate_form_input(input_label, form_items[input_type][input_label], input_type)
             }
         }
-
+        
         const submit_btn = qs("#submit-btn")
         submit_btn.value = btn_val;
 
@@ -85,7 +85,7 @@ class Signup_Form extends Form{
                 if (auth_token){
                     localStorage.setItem('token', auth_token);
                     clear_Listener("submit", Signup_Form.listener);
-                    Home.load();
+                    Welcome.redirect(Home.load);
                 } else {
                     console.log("Signup")
                     form.reset()
@@ -128,7 +128,7 @@ class Login_Form extends Form{
                 if (auth_token){
                     localStorage.setItem('token', auth_token);
                     clear_Listener("submit", Login_Form.listener);
-                    Home.load()
+                    Welcome.redirect(Home.load);
                 } else {
                     console.log("Login")
                     form.reset();
@@ -142,3 +142,19 @@ class Login_Form extends Form{
     }
 }
 
+class Welcome {
+    static load(){
+        qs("#signup-btn").style.display= "block"
+        qs("#login-btn").style.display= "block"
+    }
+    static hide(){
+        qs("#form-modal").style.display='none'
+        qs("#signup-btn").style.display='none'
+        qs("#login-btn").style.display='none'
+    }
+
+    static redirect(redirect_fn){
+        this.hide();
+        redirect_fn();
+    }
+}

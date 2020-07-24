@@ -7,7 +7,11 @@
     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>  
     <script defer src="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.js" integrity="sha384-g7c+Jr9ZivxKLnZTDUhnkOnsh30B4H0rpLUpJ4jAIKs4fnJI+sEnkvrMWph2EDg4" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2@2.0.0/dist/spectrum.min.js"></script>
 
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/spectrum-colorpicker2@2.0.0/dist/spectrum.min.css">   
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <link href="https://cdn.quilljs.com/1.3.6/quill.bubble.css" rel="stylesheet">
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -40,7 +44,7 @@
     </div>
 
     <div id = "block-1" class="w3-content" style="max-width:2000px;margin-top:62px">
-    
+      <div id = "sidebar" class="w3-sidebar w3-bar-block w3-blue" style="display:none; width:200px"></div>
     </div>
 
      <!-- Form Modal -->
@@ -59,9 +63,49 @@
       </form>
     </div>
   </div>
+
+   <!-- New Note Modal -->
+   <div id="note-modal" class="w3-modal">
+    <div class="w3-modal-content w3-animate-opacity w3-card-4">
+      <header class="w3-container w3-teal w3-center w3-padding-32"> 
+        <span onclick="document.getElementById('note-modal').style.display='none'" 
+       class="w3-button w3-teal w3-xlarge w3-display-topright">×</span>
+        <h2 class="w3-wide"> Create a New Note!</h2>
+      </header>
+
+      <div class = "note-modal-card-cont w3-container w3-center">
+        <div id = "note-modal-card" class="w3-card-4 w3-hover-shadow w3-center w3-round-xlarge" style = "height: 300px">
+          <br>
+          <div class="w3-container w3-center ">
+              <a href="#" id = "new-topic-title" class="w3-xxlarge" contenteditable="true"> New Title</a>
+              <br> <br>
+              Choose Card Color: <input id='colorpicker' value="#808080">
+            </div>
+          <div class="w3-container w3-center">
+              <div class="w3-row w3-padding-16">
+                  <div class="w3-half ">
+                      <h2>
+                          <i class="fa fa-pencil-square-o w3-xxlarge w3-hover w3-hover-text-green"></i>
+                      </h2>
+                  </div>
+                  <div class="w3-half">
+                      <h2>
+                          <i class="fa fa-trash-o w3-xxlarge w3-hover w3-hover-text-red"></i>
+                      </h2>
+                  </div>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <button id = "note-submit" class="w3-button w3-block w3-teal w3-padding-16 w3-section w3-right"> Create Note!</button>
+    <button type = "button" class="w3-button w3-red w3-section" onclick="document.getElementById('note-modal').style.display='none'">Close <i class="fa fa-remove"></i></button>
+    </div>
+  </div>
     <script src = "src/App.js"></script>
     <script src = "src/script.js"></script>
     <script src = "src/welcome.js"></script>
     <script src = "src/home.js"></script>
+    <script src = "src/user_menu.js"> </script>
 </body>
 </html>
