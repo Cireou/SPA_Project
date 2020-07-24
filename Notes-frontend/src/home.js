@@ -42,7 +42,10 @@ class Card{
                                     </div>
                                 </div>
                             </div>`
-        third.querySelector(`#card-title-${this.id}`).innerText = this.title;
+        const card_title = third.querySelector(`#card-title-${this.id}`)
+        card_title.innerText = this.title;
+        card_title.addEventListener("click", () => Home.redirect(Section.load, this))
+        
         third.querySelector(`#card-edit-${this.id}`).addEventListener("click", () => {this.edit_loader(third.children[0])})
         third.querySelector(`#card-delete-${this.id}`).addEventListener("click", this.delete_loader.bind(this))
         return third;
@@ -255,9 +258,13 @@ class Home{
         clear_Listener("submit", EditForm.listener)
     }
 
-    static redirect(redirect_fn){
-        this.hide()
-        redirect_fn();
+    static redirect(redirect_fn, arg = null){
+        Home.hide()
+        if (!!arg){
+            redirect_fn(arg)
+        } else{
+            redirect_fn()
+        }
     }
 }
 

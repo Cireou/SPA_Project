@@ -47,10 +47,12 @@ $("#colorpicker").spectrum({
   allowEmpty: "false"
 });
 
-
+var rbg_array = (str) => {
+  return [...str.matchAll(/\d{1,3}/g)].map(item => parseInt(item[0], 10))
+}
 //Returns contrasting font color from a css tag.
 var getContrast = function (css_str){
-  const [r,g,b] = [...css_str.matchAll(/\d{1,3}/g)].map(item => parseInt(item[0], 10))
+  const [r,g,b] = rbg_array(css_str)
 
 	// Get YIQ ratio
 	var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
@@ -59,3 +61,13 @@ var getContrast = function (css_str){
 	return (yiq >= 128) ? 'black' : 'white';
 
 };
+
+const add_opacity = (rbg_str, opacity = 0.6) => {
+  const [r,g,b] = rbg_array(rbg_str)
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`
+}
+
+const invert = (rbg_str) => {
+  const [r,g,b] = rbg_array(rbg_str)
+  return `rgb(${255 - r}, ${255 - g}, ${255-b})`
+}

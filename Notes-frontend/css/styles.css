@@ -6,7 +6,7 @@ body {font-family: "Lato", sans-serif}
 .create-btn{
   z-index: 9999998;
   position: absolute;
-  bottom: 9%;
+  bottom: 12%;
   left: 4%;
 }
 
@@ -16,4 +16,8 @@ body {font-family: "Lato", sans-serif}
   padding-right: 25%;
   padding-top: 2%;
   padding-bottom: 2%;
+}
+.section-list-container{
+  max-height: 500px;
+  overflow: auto;
 }
