@@ -18,4 +18,5 @@ const load_editor = () => {
       placeholder: '...',
       theme: 'snow'  // or 'bubble'
   })
+  return quill
 }

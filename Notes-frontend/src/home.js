@@ -54,8 +54,6 @@ class Card{
     edit_loader(card_container){
         qs(`#card-title-${this.id}`).contentEditable = "true";
         qs(`#card-${this.id}-btns`).style.display = "none";
-
-        ce 
         const new_HTML = `
             <div id = "temp-vals">
                 Choose a New Color: <input id='colorpicker-edit'>
@@ -90,7 +88,11 @@ class Card{
         fetch(topics_url + `/${this.id}`, reqObj("DELETE", null, localStorage.getItem("token")))
         .then(resp => {Home.load_cards(qs("#cards-container"))})
     }
+
+
 }
+
+
 
 class EditForm extends Form{
     static title = "Edit User Profile"
@@ -152,6 +154,11 @@ class New_Note_Modal{
             }
         }
     }
+    static reset(){
+        qs('#new-topic-title').innerText = "New Title";
+        qs(".sp-preview-inner").style.backgroundColor = "rgb(100,100,100)";
+        qs("#note-modal-card").style.backgroundColor = "rgb(100,100,100)";
+    }
     static color_listener(){
         const color_rbg = qs(".sp-preview-inner").style.backgroundColor
         let modal_card = qs("#note-modal-card");
@@ -197,12 +204,14 @@ class Home{
                             <button class="create-btn w3-button w3-xlarge w3-black w3-round-large">+ Create Note</button></div>`
         qs(".create-btn").onclick = () => {
             qs('#note-modal').style.display = 'block';
+            New_Note_Modal.reset();
             New_Note_Modal.add_listeners();
         }
 
     }
 
     static load_cards(container_arg, scroll_to_val = null){
+        debugger
         container_arg.innerText = "";
         fetch(users_url, reqObj("GET",null, localStorage.getItem("token")))
         .then(resp => resp.json())
@@ -224,21 +233,24 @@ class Home{
     }
 
     static load_grid(){
+        let container;
         const block1 = qs("#block-1");
 
         const grid = ce("div");
         grid.id = "grid";
 
-        const container = ce("div");
-        container.id = "cards-container"
-        container.style = "margin-left:200px";
-        container.className = "w3-padding-large"
-        
+        if (qs("#cards-container")){
+            container = qs("#cards-container")
+        } else {
+            container = ce("div");
+            container.id = "cards-container"
+            container.style = "margin-left:200px";
+            container.className = "w3-padding-large"
+        }        
         
         grid.append(container)
-
-        this.load_cards(container)
-        block1.append(grid)                                      
+        block1.append(grid)
+        this.load_cards(container)               
     }
 
 
