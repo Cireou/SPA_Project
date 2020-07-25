@@ -85,7 +85,7 @@ class Signup_Form extends Form{
                 if (auth_token){
                     localStorage.setItem('token', auth_token);
                     clear_Listener("submit", Signup_Form.listener);
-                    Welcome.redirect(Home.load);
+                    Welcome.redirect(AuthenticatedScreen.load);
                 } else {
                     console.log("Signup")
                     form.reset()
@@ -128,7 +128,7 @@ class Login_Form extends Form{
                 if (auth_token){
                     localStorage.setItem('token', auth_token);
                     clear_Listener("submit", Login_Form.listener);
-                    Welcome.redirect(Home.load);
+                    Welcome.redirect(AuthenticatedScreen.load);
                 } else {
                     console.log("Login")
                     form.reset();

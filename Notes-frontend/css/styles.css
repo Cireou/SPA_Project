@@ -7,6 +7,15 @@ body {font-family: "Lato", sans-serif}
   left: 4%;
 }
 
+#sidebar{
+  display:none;
+  width:200px;
+}
+#authenticated-container{
+  display: none;
+  margin-left: 200px;
+}
+
 .note-modal-card-cont{
   position: relative;
   padding-left: 25%;

@@ -44,7 +44,10 @@ class Card{
                             </div>`
         const card_title = third.querySelector(`#card-title-${this.id}`)
         card_title.innerText = this.title;
-        card_title.addEventListener("click", () => Home.redirect(Section.load, this))
+        card_title.addEventListener("click", () => {
+            localStorage.setItem("topic", this)
+            MyNotes.redirect(Section.load)
+        })
         
         third.querySelector(`#card-edit-${this.id}`).addEventListener("click", () => {this.edit_loader(third.children[0])})
         third.querySelector(`#card-delete-${this.id}`).addEventListener("click", this.delete_loader.bind(this))
@@ -72,76 +75,22 @@ class Card{
             type: "color",
             allowEmpty: "false"
           });
+
         qs("#card-edit-btn").addEventListener("click",  () => {
             this.title = qs(`#card-title-${this.id}`).innerText;
             this.color = qs(".sp-preview-inner").style.backgroundColor;
-            fetch(topics_url + `/${this.id}`, reqObj("PATCH", this.data(), localStorage.getItem("token")))
+            fetch(topics_url + `/${this.id}`, reqObj("PATCH", this.data(), getToken()))
             .then(resp => resp.json())
             .then(new_items => {
-                Home.load_cards(qs("#cards-container"), card_container);
+                MyNotes.load_cards(card_container);
             })
         })
         
     }
 
     delete_loader(){
-        fetch(topics_url + `/${this.id}`, reqObj("DELETE", null, localStorage.getItem("token")))
-        .then(resp => {Home.load_cards(qs("#cards-container"))})
-    }
-
-
-}
-
-
-
-class EditForm extends Form{
-    static title = "Edit User Profile"
-    static btn_val = "Submit Changes"
-
-    static form_items = {
-        "password":{
-            "Password Confirmation": "Confirm your Password",
-            "Password": "Your New Password (Or Retype Old Password)"
-        } ,
-        "text":{
-            "Email": "Your Email!",
-            "Username": "Your Username!"
-        }
-    }
-
-    static data(event){ 
-        const new_pass = event.target[2].value;
-        const new_pass_conf = event.target[3].value
-        return {
-            users:{
-                username: event.target[0].value,
-                email: event.target[1].value,
-                ...(new_pass!="" && {password: new_pass}),
-                ...(new_pass_conf!="" && {password_confirmation: new_pass_conf})
-            }
-        }
-    }
-
-    static listener(){
-        event.preventDefault();
-        fetch(users_url, reqObj("PATCH",  EditForm.data(event), localStorage.getItem("token")))
-        .then(resp => resp.json())
-        .then(JSON => {
-            qs("#form-modal").style.display = "none";
-        })
-    }
-
-    static load(){
-        Form.load(this.title, this.form_items, this.btn_val);
-        form.addEventListener("submit", this.listener)
-        fetch(users_url, reqObj("GET",null, localStorage.getItem("token")))
-        .then(resp => resp.json())
-        .then(user_info => {
-            const form_texts = EditForm.form_items.text
-            for (const key in form_texts){
-                qs(`#${key}`).value = user_info[key.toLowerCase()]
-            }
-        })
+        fetch(topics_url + `/${this.id}`, reqObj("DELETE", null, getToken()))
+        .then(resp => {MyNotes.load_cards(qs("#cards-container"))})
     }
 }
 
@@ -159,6 +108,7 @@ class New_Note_Modal{
         qs(".sp-preview-inner").style.backgroundColor = "rgb(100,100,100)";
         qs("#note-modal-card").style.backgroundColor = "rgb(100,100,100)";
     }
+
     static color_listener(){
         const color_rbg = qs(".sp-preview-inner").style.backgroundColor
         let modal_card = qs("#note-modal-card");
@@ -167,11 +117,11 @@ class New_Note_Modal{
     }
 
     static submit_listener(){
-        fetch(topics_url, reqObj("POST", New_Note_Modal.data(), localStorage.getItem("token")))
+        fetch(topics_url, reqObj("POST", New_Note_Modal.data(), getToken()))
         .then(resp => resp.json())
         .then(new_topic => {
-            qs('#note-modal').style.display = "none";
-            Home.load_cards(qs("#cards-container"));
+            modal_note.style.display = "none";
+            MyNotes.load_cards();
         })
     }
     static add_listeners(){
@@ -180,40 +130,19 @@ class New_Note_Modal{
     }
 }
 
-class Home{
-    
-    static load_sidebar() {
-        const sidebar= qs("#sidebar");
-        sidebar.style.display = "block";
-        sidebar.innerHTML += `<div><a href="#" class="w3-bar-item w3-button w3-hover-light-blue"> 
-                                    <div class="w3-container w3-center ">
-                                        <h3> Home</h3>
-                                    </div>
-                              </a>
-                              <a href="#" class="w3-bar-item w3-button w3-indigo w3-hover-indigo w3-hover-light-blue">
-                                    <div class="w3-container w3-center ">
-                                        <h3> My Notes</h3>
-                                    </div>
-                                </a>
-                            <a href="#" class="w3-bar-item w3-button w3-hover-light-blue">
-                                
-                                <div class="w3-container w3-center ">
-                                    <h3> Shared Notes</h3>
-                                    </div>
-                            </a>
-                            <button class="create-btn w3-button w3-xlarge w3-black w3-round-large">+ Create Note</button></div>`
-        qs(".create-btn").onclick = () => {
-            qs('#note-modal').style.display = 'block';
-            New_Note_Modal.reset();
-            New_Note_Modal.add_listeners();
-        }
+class MyNotes extends MenuItem{
+    static menu_item = () => qs("#menu-my-notes")
 
+    static load_sidebar() {
+        super.load()
+        this.menu_item().className = "w3-bar-item w3-button w3-indigo w3-hover-indigo"
     }
 
-    static load_cards(container_arg, scroll_to_val = null){
-        debugger
-        container_arg.innerText = "";
-        fetch(users_url, reqObj("GET",null, localStorage.getItem("token")))
+    static load_cards(scroll_to_val = null){
+        AUTH_CONTAINER.style.display = "block"
+        AUTH_CONTAINER.innerText = ""
+
+        fetch(users_url, reqObj("GET",null, getToken()))
         .then(resp => resp.json())
         .then(user_info => {
             for (let i = 0; i < user_info.topics.length; i+=3){
@@ -225,58 +154,31 @@ class Home{
                     let new_card = new Card(card_info.id, card_info.color, card_info.title, null)
                     row_div.append(new_card.to_html())
                 }
-                container_arg.append(row_div);
+                AUTH_CONTAINER.append(row_div);
             }
 
             (scroll_to_val) ? qs(`#${scroll_to_val.id}`).scrollIntoView() : true;
         })
     }
 
-    static load_grid(){
-        let container;
-        const block1 = qs("#block-1");
-
-        const grid = ce("div");
-        grid.id = "grid";
-
-        if (qs("#cards-container")){
-            container = qs("#cards-container")
-        } else {
-            container = ce("div");
-            container.id = "cards-container"
-            container.style = "margin-left:200px";
-            container.className = "w3-padding-large"
-        }        
-        
-        grid.append(container)
-        block1.append(grid)
-        this.load_cards(container)               
-    }
-
-
     static load(){
-        UserMenu.create(Home)
-        Home.load_sidebar();
-        Home.load_grid();
+        MyNotes.load_sidebar();
+        MyNotes.load_cards();
     }
 
     static hide(){
-        const sidebar = qs("#sidebar")
-        sidebar.removeChild(sidebar.children[0]);
-        sidebar.style.display = "none";
+        //1. Hide the Sidebar
+        MenuItem.hide();
 
-        qs("#grid").remove()
-        qs("#user-btn").remove()
+        //2. Clear out inner contents (Topic Cards)
+        AUTH_CONTAINER.innerText = ""
+
         clear_Listener("submit", EditForm.listener)
     }
 
-    static redirect(redirect_fn, arg = null){
-        Home.hide()
-        if (!!arg){
-            redirect_fn(arg)
-        } else{
-            redirect_fn()
-        }
+    static redirect(redirect_fn){
+        MyNotes.hide()
+        redirect_fn()
     }
 }
 

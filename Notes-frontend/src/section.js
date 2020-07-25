@@ -1,11 +1,11 @@
 const sections_url = "http://localhost:3000/sections"
 
 class Section{
+    static topic = () => localStorage.getItem("topic");
 
-    constructor(title, id, topic, data, template = false){
+    constructor(title, id, data, template = false){
         this.title = title;
         this.id = id;
-        this.topic = topic;
         this.data = data;
         this.template = template;
     }
@@ -14,7 +14,7 @@ class Section{
         return reqObj(request_type, {
             section:{
                 title: title,
-                topic_id: this.topic.id,
+                topic_id: Section.topic().id,
                 notes: data
             }
         }, getToken())
@@ -36,16 +36,16 @@ class Section{
     }
 
     to_html(){
-        const contrast = getContrast(this.topic.color);
+        const contrast = getContrast(Section.topic().color);
 
         const li = ce("li");
-        li.id = `${this.topic.title}-section-${this.id}`;
+        li.id = `${Section.topic().title}-section-${this.id}`;
         li.className = `w3-display-container w3-hover-${(contrast == "white") ? "black" : "white"}`;
-        li.style.backgroundColor = `${add_opacity(this.topic.color)}`
+        li.style.backgroundColor = `${add_opacity(Section.topic().color)}`
         li.innerHTML = `<span class = "title">${this.title}</span>
                         <span class = "w3-button w3-transparent w3-display-right">×</span>`;
         li.querySelector(".title").addEventListener("click", () => {
-            Section.load_sidebar(this.topic, this)
+            Section.load_sidebar(this)
         })
 
         li.querySelector(".w3-button").addEventListener("click", () => {
@@ -76,7 +76,7 @@ class Section{
             </div>
         `      
         const quill = load_editor();
-        quill.setContents(JSON.parse(this.data))  
+        quill.setContents(this.data)  
 
         qs("#note-save-btn").addEventListener("click", () => {
             const title = qs("#note-title").innerText;
@@ -90,7 +90,7 @@ class Section{
                 this.id = new_data.id;
                 this.data = JSON.parse(new_data.notes);
                 this.title = new_data.title;
-                Section.load_sidebar(this.topic, this)
+                Section.load_sidebar(this)
                 qs(".create-btn").style.display = "block"
             })
         })  
@@ -108,23 +108,19 @@ class Section{
         block_1.append(container); 
         return container;
     }
-    static home_listener(){
-        Section.redirect(Home.load)
-    }
-    static create_listener(topic){
-        const new_section = new Section("New Section", 9999, topic, "{}", true);
+
+    static create_listener(){
+        const new_section = new Section("New Section", 9999, Section.topic(), "{}", true);
         qs("#section-list").append(new_section.to_html());
         new_section.load_note();
         qs(".create-btn").style.display = "none";
     }
 
-    static load_sidebar(topic, target_section = null){
+    static load_sidebar(target_section = null){
         const opacity_color = add_opacity(topic.color);
-        const sidebar= qs("#sidebar");
-
-        sidebar.innerText = "";
-        const child = block_1.children[1];
-        if (child){block_1.removeChild(child)}
+        const topic = Section.topic();
+        SIDEBAR.innerText = "";
+        MenuItem.hide();
 
         sidebar.className = "w3-sidebar w3-bar-block"
         sidebar.style = `display: block; background-color: ${opacity_color}`;
@@ -144,12 +140,12 @@ class Section{
         qs("#topic-title").innerText = topic.title;
         qs(".create-btn").onclick = () => {this.create_listener(topic)}
 
-        fetch(topics_url + `/${topic.id}`, reqObj("GET", null, localStorage.getItem("token")))
+        fetch(topics_url + `/${topic.id}`, reqObj("GET", null, getToken()))
         .then(resp => resp.json())
         .then(req_topic => {
             const ul = qs("#section-list");
             for (const section of req_topic.sections){
-                let new_section = new Section(section.title, section.id, topic, section.notes);
+                let new_section = new Section(section.title, section.id, topic, JSON.parse(section.notes));
                 (!target_section && section == req_topic.sections[0]) ? target_section = new_section : false;
                 ul.append(new_section.to_html());
                 if (section.id == target_section.id){
@@ -173,22 +169,26 @@ class Section{
             }       
         })}
 
-    static load(topic){
-        UserMenu.create(Section)
+    static load(){
+        //1. Load the sidebar
         Section.load_sidebar(topic);
-        (qs("#cards-container")) ? load_empty_container(): false;
-        qs("#home-btn").addEventListener("click", Section.home_listener)
+        //2. Load the inner contents
+        Section.load_note;
+        
     }
 
     static hide(){
-        qs("#sidebar").className = "w3-sidebar w3-bar-block w3-blue";
-        const sidebar = qs("#sidebar")
-        sidebar.removeChild(sidebar.children[0]);
-        sidebar.style.display = "none";
-        qs("#user-btn").remove()
-        qs("#cards-container").innerText = "";
+        SIDEBAR.className = "w3-sidebar w3-bar-block w3-blue";
+
+        //1. Hide the Sidebar
+        MenuItem.hide();
+
+        //2. Clear out inner contents (Notes)
+        AUTH_CONTAINER.innerText = ""
+
+        //3. Clear out local storage
+        localStorage.removeItem("topic")
         clear_Listener("submit", EditForm.listener)
-        $("#home-btn").off()
     }
 
     static redirect(redirect_fn){

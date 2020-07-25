@@ -1,14 +1,25 @@
+//Basic Functions
 const qs = (item) => document.querySelector(item);
 const ce = (item) => document.createElement(item);
 
+//Existing NAVBAR
+const NAVBAR = qs("#nav-bar");
+const HOME_BTN = qs("#home-btn")
+
+//Body
 const block_1 = qs("#block-1");
+const SIDEBAR = qs("#sidebar");
+const AUTH_CONTAINER = qs("#authenticated-container");
 
-function getToken(){
-  return localStorage.getItem("token")
-}
+//Modals
+const modal_form = qs('#form-modal');
+const modal_note = qs("#note-modal")
+
+//Token Retrieval
+const getToken = () => localStorage.getItem("token");
+
 const reqObj = (method, body_args, auth_token = null) =>{
-
-    let ret_Obj = {
+    return {
         method: method, //patch, delete, post
         headers: {
             "Content-type":"application/json",
@@ -17,13 +28,10 @@ const reqObj = (method, body_args, auth_token = null) =>{
         },
         ...(body_args && {"body": JSON.stringify(body_args)})
     }
-    return ret_Obj;
 }
 
 
 // When the user clicks anywhere outside of the modal, close it
-const modal_form = qs('#form-modal');
-const modal_note = qs("#note-modal")
 window.onclick = function(event) {
   if (event.target == modal_form) {
     modal_form.style.display = "none";
@@ -51,9 +59,9 @@ $("#colorpicker").spectrum({
   allowEmpty: "false"
 });
 
-var rbg_array = (str) => {
-  return [...str.matchAll(/\d{1,3}/g)].map(item => parseInt(item[0], 10))
-}
+//Color Functions
+var rbg_array = (str) => [...str.matchAll(/\d{1,3}/g)].map(item => parseInt(item[0], 10))
+
 //Returns contrasting font color from a css tag.
 var getContrast = function (css_str){
   const [r,g,b] = rbg_array(css_str)
@@ -63,7 +71,6 @@ var getContrast = function (css_str){
 
 	// Check contrast
 	return (yiq >= 128) ? 'black' : 'white';
-
 };
 
 const add_opacity = (rbg_str, opacity = 0.6) => {
