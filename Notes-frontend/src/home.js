@@ -127,7 +127,7 @@ class EditForm extends Form{
         fetch(users_url, reqObj("PATCH",  EditForm.data(event), localStorage.getItem("token")))
         .then(resp => resp.json())
         .then(JSON => {
-            console.log(JSON)
+            qs("#form-modal").style.display = "none";
         })
     }
 
