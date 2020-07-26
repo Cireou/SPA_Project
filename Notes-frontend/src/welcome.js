@@ -142,15 +142,40 @@ class Login_Form extends Form{
     }
 }
 
+class Slideshow{
+    constructor(class_name){
+        this.class_name = class_name;
+        this.current = 0;
+        this.timer = null;
+    }
+    load(){
+        SLIDESHOW.style.display = "block"
+        var slides = [...document.getElementsByClassName(this.class_name)];
+        slides.forEach(slide => slide.style.display = "none");
+        this.current += 1;
+        if (this.current > slides.length){this.current = 1}
+        slides[this.current - 1].style.display = "block";
+        this.timer = setTimeout(this.load.bind(this), 3000);
+    }
+    hide(){
+        SLIDESHOW.style.display = "none"
+        clearTimeout(this.timer);
+    }
+}
+
 class Welcome {
+    static slideshow =  new Slideshow("mySlides")
     static load(){
         qs("#signup-btn").style.display= "block"
         qs("#login-btn").style.display= "block"
+
+        Welcome.slideshow.load();
     }
     static hide(){
         qs("#form-modal").style.display='none'
         qs("#signup-btn").style.display='none'
         qs("#login-btn").style.display='none'
+        Welcome.slideshow.hide();
     }
 
     static redirect(redirect_fn){
@@ -158,3 +183,5 @@ class Welcome {
         redirect_fn();
     }
 }
+
+Welcome.load();

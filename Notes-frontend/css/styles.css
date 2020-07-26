@@ -11,6 +11,15 @@ body {font-family: "Lato", sans-serif}
   display:none;
   width:200px;
 }
+
+#slideshow{
+  position: fixed;
+  height: 100%;
+  width: 100%;
+}
+.mySlides{
+  width:100%;
+}
 #authenticated-container{
   display: none;
   margin-left: 200px;

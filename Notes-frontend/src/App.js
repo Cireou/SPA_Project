@@ -9,6 +9,7 @@ const HOME_BTN = qs("#home-btn")
 //Body
 const block_1 = qs("#block-1");
 const SIDEBAR = qs("#sidebar");
+const SLIDESHOW = qs("#slideshow");
 const AUTH_CONTAINER = qs("#authenticated-container");
 
 //Modals
@@ -29,6 +30,8 @@ const reqObj = (method, body_args, auth_token = null) =>{
         ...(body_args && {"body": JSON.stringify(body_args)})
     }
 }
+
+
 
 
 // When the user clicks anywhere outside of the modal, close it
@@ -82,3 +85,4 @@ const invert = (rbg_str) => {
   const [r,g,b] = rbg_array(rbg_str)
   return `rgb(${255 - r}, ${255 - g}, ${255-b})`
 }
+

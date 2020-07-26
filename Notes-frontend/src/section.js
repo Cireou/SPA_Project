@@ -13,7 +13,7 @@ class SectionsPage{
             <div class="w3-container">
             <h2 style = "color: red; font-size: 40px; text-align: center;"><b>No Sections Yet!</b></h2>
             </div>
-            <img src="./frown.png" alt="Notebook" style="max-width: 26%; width: 100%; max-height: 28%; text-align: center;">
+            <img src="./Images/frown.png" alt="Notebook" style="max-width: 26%; width: 100%; max-height: 28%; text-align: center;">
             <div class="w3-container">
             <h2 style = "font-size: 30px; text-align: center;"><b>Create a new section by clicking "New Section"!</b></h2>
             </div>
@@ -217,7 +217,9 @@ class Section{
     hide(){
         const topic = Section.topic();
         const section_HTML = qs(`#${topic.title}-section-${this.id}`);
-        section_HTML.style.backgroundColor = Section.base().bg_color;
-        section_HTML.style.color = getContrast(Section.base().bg_color);
+        if (section_HTML){
+            section_HTML.style.backgroundColor = Section.base().bg_color;
+            section_HTML.style.color = getContrast(Section.base().bg_color);
+        }
     }
 }

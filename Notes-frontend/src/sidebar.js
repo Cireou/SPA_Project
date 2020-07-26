@@ -5,7 +5,7 @@ class MenuItem{
         SIDEBAR.innerHTML += `<div>
                 <a href="#" id = "menu-home" class="w3-bar-item w3-button 
                             w3-hover-light-blue"> 
-                    <div class="w3-container w3-center ">
+                    <div class="w3-container w3-center">
                         <h3> Home</h3>
                     </div>
                 </a>

@@ -16,6 +16,7 @@ const load_editor = () => {
           toolbar: toolbarOptions
       },
       placeholder: '...',
+      bounds: '#editor-container',
       theme: 'snow'  // or 'bubble'
   })
   return quill
