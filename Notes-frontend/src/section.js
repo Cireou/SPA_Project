@@ -169,16 +169,15 @@ class Section{
 
     load_note(){
         AUTH_CONTAINER.innerHTML = `
-            <div id = "full-card" class="w3-card-4">
+            <div id = "full-card">
                 <header class="w3-container w3-blue">
-                    <div id = "note-title" contentEditable = true> <h2> ${this.title} </h2></div>
+                    <div id = "note-title" contentEditable = true> <h2> ${this.title} </h2>
+                    </div>
                 </header>
-                <div class="w3-container">
+                <i id = "note-save-btn" class="fa fa-floppy-o"></i>
+                <div class="w3-container" style = "height:100%;">
                     <div id = "editor-container">
                     </div>
-                </div>
-                <div class="w3-container">
-                    <button id = "note-save-btn"> Save Changes! </button>
                 </div>
             </div>
         `      
