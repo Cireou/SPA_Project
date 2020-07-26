@@ -22,7 +22,6 @@ class UserMenu{
     }
 
     static hide(){
-        debugger
         this.user_icon().remove();
     }
 }

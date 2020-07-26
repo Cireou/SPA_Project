@@ -34,5 +34,6 @@ class MenuItem{
     static hide(){
         SIDEBAR.removeChild(sidebar.children[0]);
         SIDEBAR.style.display = "none";
+        SIDEBAR.className ="w3-sidebar w3-bar-block w3-blue"
     }
 }

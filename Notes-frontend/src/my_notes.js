@@ -45,8 +45,8 @@ class Card{
         const card_title = third.querySelector(`#card-title-${this.id}`)
         card_title.innerText = this.title;
         card_title.addEventListener("click", () => {
-            localStorage.setItem("topic", this)
-            MyNotes.redirect(Section.load)
+            localStorage.setItem("topic", JSON.stringify(this))
+            MyNotes.redirect(SectionsPage.load)
         })
         
         third.querySelector(`#card-edit-${this.id}`).addEventListener("click", () => {this.edit_loader(third.children[0])})
