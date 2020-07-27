@@ -60,5 +60,16 @@ body {font-family: "Lato", sans-serif}
   top: 1%;
   right: 1%;
   cursor: pointer;
+}
 
+.owner-div-item{
+  display: inline-block;
+}
+
+.icons{
+  cursor: pointer;
+}
+
+.fa-share-square-o{
+  
 }
