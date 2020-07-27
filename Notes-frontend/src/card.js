@@ -110,23 +110,31 @@ class MyNotesCard extends Card{
                                         <input type = "submit" value = "Share!">
                                     </form>
                                 </div>`
-        share_div.querySelector(".icons").addEventListener("click", this.share_listener.bind(this))
+        share_div.querySelector(".icons").addEventListener("click", () => {
+            this.share_listener(this, share_div.querySelector("#share-form"))
+        })
     }
 
-    share_listener(){
-        const share_form = qs("#share-form");
+    share_listener(card, share_form){
         if (share_form.style.display == "none"){
             share_form.style.display = "block"
             const submit_btn = share_form.querySelector("input[type='submit']");
-            submit_btn.addEventListener("submit", () => {
-                event.preventDefault();
-                debugger
-                fetch(shared_topics_url, reqObj("POST", {}))
-                .then(resp => resp.json());
-            })
+            share_form.addEventListener("submit", () => {this.share_form_listener(card, share_form)})
         } else {
             share_form.style.display = "none";
         }
+    }
+
+    share_form_listener(card, form){
+        event.preventDefault()
+        fetch(shared_topics_url, reqObj("POST", {
+            shared_topic_id: card.id,
+            sharee_email: event.target[0].value
+        }, getToken()))
+        .then(resp => resp.json())
+        .then(info => {
+            form.style.display = "none"
+        })
     }
     delete_loader(){
         fetch(topics_url + `/${this.id}`, reqObj("DELETE", null, getToken()))

@@ -75,7 +75,9 @@ class SectionsPage{
         await SectionsPage.load_sidebar();     
         
         //2. Open the note container
-        SectionsPage.current_section().load();
+        if (SectionsPage.current_section()){
+            SectionsPage.current_section().load();
+        }
     }
 
     static hide(){
