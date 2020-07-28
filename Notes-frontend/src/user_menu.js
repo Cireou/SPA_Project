@@ -29,6 +29,12 @@ class UserMenu{
 class EditForm extends Form{
     static title = "Edit User Profile"
     static btn_val = "Submit Changes"
+    static linker_map = () => {
+        return {
+            text: "Delete Account",
+            listener: this.destroyer_listener
+        }
+    }
 
     static form_items = {
         "password":{
@@ -39,6 +45,11 @@ class EditForm extends Form{
             "Email": "Your Email!",
             "Username": "Your Username!"
         }
+    }
+
+    static destroyer_listener(){
+        fetch(users_url, reqObj("DELETE", null, getToken()))
+        .then(values => {AuthenticatedScreen.redirect(Welcome.load)})
     }
 
     static data(event){ 
@@ -64,7 +75,7 @@ class EditForm extends Form{
     }
 
     static load(){
-        Form.load(this.title, this.form_items, this.btn_val);
+        Form.load(this.title, this.form_items, this.linker_map(), this.btn_val);
         form.addEventListener("submit", this.listener)
         fetch(users_url, reqObj("GET",null, getToken()))
         .then(resp => resp.json())
@@ -83,6 +94,7 @@ class AuthenticatedScreen{
     static load(){
         //1. Update Logo to redirect to Home
         HOME_BTN.onclick = () => {
+            clearStorageExcept(["token"])
             MenuItem.hide();
             MyNotes.load();
         }
@@ -110,6 +122,9 @@ class AuthenticatedScreen{
 
         //4. Clear out Body (Grid/Note)
         AUTH_CONTAINER.innerText = "";
+
+        //5. Hide Edit User Modals
+        qs("#form-modal").style.display = "none"
     }
 
     static redirect(redirect_fn){

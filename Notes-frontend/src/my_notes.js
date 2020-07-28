@@ -11,15 +11,7 @@ class New_Note_Modal{
     }
     static reset(){
         qs('#new-topic-title').innerText = "New Title";
-        qs(".sp-preview-inner").style.backgroundColor = "rgb(100,100,100)";
         qs("#note-modal-card").style.backgroundColor = "rgb(100,100,100)";
-    }
-
-    static color_listener(){
-        const color_rbg = qs(".sp-preview-inner").style.backgroundColor
-        let modal_card = qs("#note-modal-card");
-        modal_card.style.backgroundColor = `${color_rbg}`;
-        modal_card.style.color = `${getContrast(color_rbg)}`
     }
 
     static submit_listener(){
@@ -31,7 +23,7 @@ class New_Note_Modal{
         })
     }
     static add_listeners(){
-        qs(".sp-choose").addEventListener("click", this.color_listener)
+        $("#colorpicker").spectrum(spectrum_map({color: this.color, card: qs("#note-modal-card")}));
         qs("#note-submit").addEventListener("click", this.submit_listener)
     }
 }
@@ -44,6 +36,12 @@ class MyNotes extends MenuItem{
         this.menu_item().className = "w3-bar-item w3-button w3-indigo w3-hover-indigo"
     }
 
+    static load_empty_page(){
+        AUTH_CONTAINER.innerHTML = NO_SECTION_HTML
+        qs(".title").innerText = "You Haven't Made Any Notes Yet!"
+        qs(".footer").innerText = `Create a new topic for your notes first by clicking "Create Note!"`
+    }
+
     static load_cards(scroll_to_val = null){
         AUTH_CONTAINER.style.display = "block"
         AUTH_CONTAINER.innerText = ""
@@ -51,6 +49,7 @@ class MyNotes extends MenuItem{
         fetch(users_url, reqObj("GET",null, getToken()))
         .then(resp => resp.json())
         .then(user_info => {
+            if (user_info.topics.length == 0){this.load_empty_page()}
             for (let i = 0; i < user_info.topics.length; i+=3){
                 let row_div = ce("div")
                 row_div.className = "w3-row-padding"
@@ -62,7 +61,6 @@ class MyNotes extends MenuItem{
                 }
                 AUTH_CONTAINER.append(row_div);
             }
-
             (scroll_to_val) ? qs(`#${scroll_to_val.id}`).scrollIntoView() : true;
         })
     }

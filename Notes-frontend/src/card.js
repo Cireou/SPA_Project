@@ -19,66 +19,65 @@ class Card{
         const third = ce("div");
         third.className = "w3-third w3-padding-large";
 
-        third.innerHTML = ` <div id = "card-cont-${this.id}" class="w3-card-4 w3-hover-shadow w3-center w3-round-xlarge" 
-                                style="height: 350px; max-width: 3500px; background-color:${this.color}; color: ${getContrast(this.color)}">
-                                <br>
-                                <div id = "share-container">
-                                </div>
-                                <br>
-                                <div class="w3-container w3-center">
-                                    <a href="#" id = "card-title-${this.id}" class="w3-xxlarge"></a>
-                                </div>
-                                <br> 
-                                <div class = "owner-div">
-                                </div>
-                                <br> 
-                                <div id = "card-${this.id}-btns" class="w3-container w3-center">
-                                    <div class="w3-row w3-padding-16">
-                                        <div class="w3-half ">
-                                            <h2>
-                                                <i id="card-edit-${this.id}" class="fa fa-pencil-square-o w3-xxlarge w3-hover w3-hover-text-green"></i>
-                                            </h2>
-                                        </div>
-                                        <div class="w3-half">
-                                            <h2>
-                                                <i id="card-delete-${this.id}" class="fa fa-trash-o w3-xxlarge w3-hover w3-hover-text-red"></i>
-                                            </h2>
+        third.innerHTML = ` <div style = "position: relative; color: ${getContrast(this.color)};"> 
+                                <div id = "card-cont-${this.id}" class="w3-card-4 w3-hover-shadow w3-center w3-round-xlarge" 
+                                        style="height: 350px; max-width: 3500px; background-color:${this.color};">
+                                    <br>
+                                    <br>
+                                    <div class="w3-container w3-center">
+                                        <a href="#" id = "card-title-${this.id}" class="w3-xxlarge"></a>
+                                    </div>
+                                    <br> 
+                                    <div class = "owner-div">
+                                    </div>
+                                    <br> 
+                                    <div id = "card-${this.id}-btns" class="w3-container w3-center">
+                                        <div class="w3-row w3-padding-16">
+                                            <div class="w3-half ">
+                                                <h2>
+                                                    <i id="card-edit-${this.id}" class="fa fa-pencil-square-o w3-xxlarge w3-hover w3-hover-text-green"></i>
+                                                </h2>
+                                            </div>
+                                            <div class="w3-half">
+                                                <h2>
+                                                    <i id="card-delete-${this.id}" class="fa fa-trash-o w3-xxlarge w3-hover w3-hover-text-red"></i>
+                                                </h2>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>  
+                                <div id = "share-container"></div>
                             </div>`
         const card_title = third.querySelector(`#card-title-${this.id}`)
         card_title.innerText = this.title;
-        card_title.addEventListener("click", () => {
-            localStorage.setItem("topic", JSON.stringify(this))
-            MyNotes.redirect(SectionsPage.load)
-        })
+        card_title.addEventListener("click", this.section_listener.bind(this))
         
         third.querySelector(`#card-edit-${this.id}`).addEventListener("click", () => {this.edit_loader(third.children[0])})
         return third;
     }
 
+    section_listener(){
+        localStorage.setItem("topic", JSON.stringify(this))
+        MyNotes.redirect(SectionsPage.load)
+    }
     edit_loader(card_container){
+        const item = qs(`#card-title-${this.id}`)
+        const new_item = item.cloneNode(true);
+        item.parentNode.replaceChild(new_item, item)
+        
         qs(`#card-title-${this.id}`).contentEditable = "true";
         qs(`#card-${this.id}-btns`).style.display = "none";
-        const new_HTML = `
-            <div id = "temp-vals">
-                Choose a New Color: <input id='colorpicker-edit'>
-                <button id = "card-edit-btn" 
-                    class="w3-button w3-block w3-teal w3-padding-16 w3-section w3-center"> 
-                    Update!
-                </button>
-            </div>
-        `
-        card_container.innerHTML += new_HTML
-        $("#colorpicker-edit").spectrum({
-            showPaletteOnly: true,
-            togglePaletteOnly: true,
-            togglePaletteMoreText: 'more',
-            togglePaletteLessText: 'less',
-            type: "color",
-            allowEmpty: "false"
-          });
+
+        const temp_vals = ce("div")
+        temp_vals.id = "temp-vals"
+        temp_vals.innerHTML = `Choose a New Color: <input id='colorpicker-edit'>
+                                <br><br><br>
+                                <button id = "card-edit-btn" class="w3-button w3-teal w3-padding-16"> 
+                                    Update!
+                                </button>` 
+
+        qs(`#card-cont-${this.id}`).append(temp_vals);
+        $("#colorpicker-edit").spectrum(spectrum_map({color: this.color, card: qs(`#card-cont-${this.id}`)}));
 
         qs("#card-edit-btn").addEventListener("click",  () => {
             this.title = qs(`#card-title-${this.id}`).innerText;
@@ -86,7 +85,7 @@ class Card{
             fetch(topics_url + `/${this.id}`, reqObj("PATCH", this.data(), getToken()))
             .then(resp => resp.json())
             .then(new_items => {
-                MyNotes.load_cards(card_container);
+                MyNotes.load_cards(card_container.children[0]);
             })
         })
         
@@ -145,9 +144,10 @@ class MyNotesCard extends Card{
 
 class SharedNotesCard extends Card{
 
-    constructor(id, color, title, owner, sharee){
+    constructor(id, color, title, owner, sharee, share_id){
         super(id, color, title, owner);
         this.sharee = sharee;
+        this.shared_topic_id = share_id
     }
 
     to_html(){
@@ -158,8 +158,9 @@ class SharedNotesCard extends Card{
     }
 
     delete_loader(){
-        fetch(shared_topics_url + `/${this.id}`, reqObj("DELETE", null, getToken()))
-        .then(resp => {MyNotes.load_cards(qs("#cards-container"))})
+        debugger
+        fetch(shared_topics_url + `/${this.shared_topic_id}`, reqObj("DELETE", null, getToken()))
+        .then(resp => {SharedNotes.load_cards(qs("#cards-container"))})
     }
 
 }

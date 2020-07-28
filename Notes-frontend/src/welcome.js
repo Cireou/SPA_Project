@@ -23,7 +23,7 @@ class Form{
         form_inputs.prepend(p, input)
     }
 
-    static load(title, form_items, btn_val, listener = null){
+    static load(title, form_items, linker_map, btn_val, listener = null){
         nav_modal.style.display="block"
 
         const form_title = qs("#form-title")
@@ -36,6 +36,10 @@ class Form{
             }
         }
         
+        const linker = qs("#linker");
+        linker.innerText = linker_map.text;
+        linker.addEventListener("click", () => {(linker_map.listener) ? linker_map.listener() : false;})
+
         const submit_btn = qs("#submit-btn")
         submit_btn.value = btn_val;
 
@@ -51,6 +55,10 @@ class Form{
 
 class Signup_Form extends Form{
     static navbar_btn = qs("#signup-btn")
+    static linker_map = () => {return { 
+        text: "Already Have an Account?",
+        listener: Login_Form.load
+    }}
 
     static title = "Signup"
     static btn_val = "Create Account"
@@ -93,8 +101,9 @@ class Signup_Form extends Form{
             })
     }
     static load(){
-        Form.load(this.title, this.form_items, this.btn_val, Login_Form.listener);
-        form.addEventListener("submit", this.listener)
+        Form.load(Signup_Form.title, Signup_Form.form_items, Signup_Form.linker_map(), 
+            Signup_Form.btn_val, Login_Form.listener);
+        form.addEventListener("submit", Signup_Form.listener)
     }
 }
 
@@ -102,6 +111,10 @@ class Login_Form extends Form{
     static navbar_btn = qs("#login-btn")
     static title = "Sign In"
     static btn_val = "Sign in!"
+    static linker_map = () => {return { 
+        text: "Don't Have an Account Yet?",
+        listener: Signup_Form.load
+    }}
 
     static form_items = {
         "password":{
@@ -137,8 +150,9 @@ class Login_Form extends Form{
     }
 
     static load(){
-        Form.load(this.title, this.form_items, this.btn_val, Signup_Form.listener);
-        form.addEventListener("submit", this.listener)
+        Form.load(Login_Form.title, Login_Form.form_items, Login_Form.linker_map(),
+            Login_Form.btn_val, Signup_Form.listener);
+        form.addEventListener("submit", Login_Form.listener)
     }
 }
 
@@ -166,6 +180,7 @@ class Slideshow{
 class Welcome {
     static slideshow =  new Slideshow("mySlides")
     static load(){
+        localStorage.clear();
         qs("#signup-btn").style.display= "block"
         qs("#login-btn").style.display= "block"
 

@@ -8,19 +8,8 @@ class SectionsPage{
     };
     static topic = () => JSON.parse(localStorage.getItem('topic'));
 
-    static no_section_HTML = 
-        `<div class="w3-container" style=" padding-top: 5%; width: 100%; max-height: 50%; text-align: center">
-            <div class="w3-container">
-            <h2 style = "color: red; font-size: 40px; text-align: center;"><b>No Sections Yet!</b></h2>
-            </div>
-            <img src="./Images/frown.png" alt="Notebook" style="max-width: 26%; width: 100%; max-height: 28%; text-align: center;">
-            <div class="w3-container">
-            <h2 style = "font-size: 30px; text-align: center;"><b>Create a new section by clicking "New Section"!</b></h2>
-            </div>
-        </div>`
-    
     static create_listener(){
-        this.current_section().hide()
+        if (this.current_section()){this.current_section().hide()}
         const new_section = new Section({title: "New Section", id: 9999, notes: "{}", template: true});
         qs("#section-list").append(new_section.to_html());
         new_section.load()
@@ -40,7 +29,11 @@ class SectionsPage{
             ul.append(new_section.to_html());
         }
 
-        if (sections.length == 0){ AUTH_CONTAINER.innerHTML = this.no_section_HTML;} 
+        if (sections.length == 0){ 
+            AUTH_CONTAINER.innerHTML = NO_SECTION_HTML
+            qs(".title").innerText = "No Sections Yet!"
+            qs(".footer").innerText = `Create a new section by clicking "New Section"!`
+        } 
     }
 
     static async load_sidebar(){
@@ -153,13 +146,15 @@ class Section{
         const contrast = getContrast(topic.color);
 
         const li = ce("li");
-        li.id = `${Section.topic().title}-section-${this.id}`;
+        li.id = `li-section-${this.id}`;
         li.className = `w3-display-container w3-hover-${Section.base().hover_color}`;
         li.style.backgroundColor = Section.base().bg_color;
         li.innerHTML = `<span class = "title">${this.title}</span>
                         <span class = "w3-button w3-transparent w3-display-right">×</span>`;
         li.querySelector(".title").addEventListener("click", () => {
-            SectionsPage.current_section().hide();
+            if (SectionsPage.current_section()){
+                SectionsPage.current_section().hide();
+            }
             this.load();
         })
 
@@ -208,17 +203,19 @@ class Section{
 
     load(){
         const topic = Section.topic();
-        const section_HTML = qs(`#${topic.title}-section-${this.id}`);
-        if (!section_HTML){ return}
+        const section_HTML = qs(`#li-section-${this.id}`);
+        if (section_HTML){
+            section_HTML.style.backgroundColor = Section.selected().bg_color;
+            section_HTML.style.color = Section.selected().text_color;
+        }
         if (!this.template){localStorage.setItem("cur_section", JSON.stringify(this));}
-        section_HTML.style.backgroundColor = Section.selected().bg_color;
-        section_HTML.style.color = Section.selected().text_color;
+        
         this.load_note()
     }
 
     hide(){
         const topic = Section.topic();
-        const section_HTML = qs(`#${topic.title}-section-${this.id}`);
+        const section_HTML = qs(`#li-section-${this.id}`);
         if (section_HTML){
             section_HTML.style.backgroundColor = Section.base().bg_color;
             section_HTML.style.color = getContrast(Section.base().bg_color);

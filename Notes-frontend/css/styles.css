@@ -20,6 +20,11 @@ body {font-family: "Lato", sans-serif}
 .mySlides{
   width:100%;
 }
+
+#linker{
+  text-align: center;
+  display: inherit;
+}
 #authenticated-container{
   display: none;
   margin-left: 200px;
@@ -68,8 +73,41 @@ body {font-family: "Lato", sans-serif}
 
 .icons{
   cursor: pointer;
+
 }
 
 .fa-share-square-o{
-  
+  right: 11px;
+  position: absolute;
+  top: 14px;
+}
+
+#share-form{
+  top: 35px;
+  position: absolute;
+  right: 0px;
+}
+
+#none-existwg-container.w3-container{
+  text-align: center;
+  font-weight: bold;
+}
+#none-existing-container .title{
+  color: red; 
+  font-size: 40px;
+  text-align: center;
+  font-weight: bold;
+}
+
+#none-existing-container .img{
+  max-width: 26%; 
+  width: 100%;
+  max-height: 28%; 
+  text-align: center;
+}
+
+#none-existing-container .footer{
+  font-size: 30px; 
+  text-align: center;
+  font-weight: bold;
 }
