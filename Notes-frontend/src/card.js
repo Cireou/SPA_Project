@@ -51,7 +51,6 @@ class Card{
         const card_title = third.querySelector(`#card-title-${this.id}`).querySelector("h2")
         card_title.innerText = this.title;
         card_title.addEventListener("click", this.section_listener.bind(this))
-        third.querySelector(`#card-edit-${this.id}`).addEventListener("click", () => {this.edit_loader(third.children[0])})
         return third;
     }
 
@@ -59,7 +58,7 @@ class Card{
         localStorage.setItem("topic", JSON.stringify(this))
         MyNotes.redirect(SectionsPage.load)
     }
-    edit_loader(card_container){
+    edit_loader(card_container, reload_class){
         const item = qs(`#card-title-${this.id}`)
         const new_item = item.cloneNode(true);
         item.parentNode.replaceChild(new_item, item)
@@ -70,8 +69,8 @@ class Card{
         const temp_vals = ce("div")
         temp_vals.id = "temp-vals"
         temp_vals.innerHTML = `Choose a New Color: <input id='colorpicker-edit'>
-                                <br><br><br>
-                                <button id = "card-edit-btn" class="w3-button w3-teal w3-padding-16"> 
+                                <br><br>
+                                <button id = "card-edit-btn" class="w3-button w3-teal"> 
                                     Update!
                                 </button>` 
 
@@ -84,7 +83,7 @@ class Card{
             fetch(topics_url + `/${this.id}`, reqObj("PATCH", this.data(), getToken()))
             .then(resp => resp.json())
             .then(new_items => {
-                MyNotes.load_cards(card_container.children[0]);
+                reload_class.load_cards(card_container.children[0]);
             })
         })
         
@@ -95,6 +94,7 @@ class MyNotesCard extends Card{
     to_html(){
         const third = super.to_html();
         this.add_share_listener(third)
+        third.querySelector(`#card-edit-${this.id}`).addEventListener("click", () => {this.edit_loader(third.children[0], MyNotes)})
         third.querySelector(`#card-delete-${this.id}`).addEventListener("click", this.delete_loader.bind(this))
         return third;
     }
@@ -152,6 +152,7 @@ class SharedNotesCard extends Card{
     to_html(){
         const third = super.to_html();
         third.querySelector(".owner-div").innerHTML =  `<i class="fa fa-user owner-div-item"></i> <h2 class = "owner-div-item "> ${this.owner}</h2>`
+        third.querySelector(`#card-edit-${this.id}`).addEventListener("click", () => {this.edit_loader(third.children[0], SharedNotes)})
         third.querySelector(`#card-delete-${this.id}`).addEventListener("click", this.delete_loader.bind(this))
         return third;
     }

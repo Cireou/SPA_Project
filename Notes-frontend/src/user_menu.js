@@ -49,7 +49,9 @@ class EditForm extends Form{
 
     static destroyer_listener(){
         fetch(users_url, reqObj("DELETE", null, getToken()))
-        .then(values => {AuthenticatedScreen.redirect(Welcome.load)})
+        .then(values => {
+            AuthenticatedScreen.redirect(Welcome.load)
+        })
     }
 
     static data(event){ 

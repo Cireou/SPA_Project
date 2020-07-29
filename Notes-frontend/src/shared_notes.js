@@ -27,7 +27,8 @@ class SharedNotes extends MenuItem{
                 for (let j = 0; (j + i < shared_topics.length && j < 3); j++){
                     let shared_info = shared_topics[i + j];
                     let card_info = shared_info.shared_topic
-                    let new_card = new SharedNotesCard(card_info.id, card_info.color, card_info.title, shared_info.owner.username, shared_info.sharee.username, shared_info.id)
+                    let new_card = new SharedNotesCard(card_info.id, card_info.color, card_info.title, shared_info.owner.username, 
+                        shared_info.sharee.username, shared_info.id)
                     row_div.append(new_card.to_html())
                 }
                 AUTH_CONTAINER.append(row_div);
