@@ -29,6 +29,7 @@ class UserMenu{
 class EditForm extends Form{
     static title = "Edit User Profile"
     static btn_val = "Submit Changes"
+    static needed_keys = ["username", "email"]
     static linker_map = () => {
         return {
             text: "Delete Account",
@@ -50,6 +51,7 @@ class EditForm extends Form{
     static destroyer_listener(){
         fetch(users_url, reqObj("DELETE", null, getToken()))
         .then(values => {
+            $()
             AuthenticatedScreen.redirect(Welcome.load)
         })
     }
@@ -68,9 +70,10 @@ class EditForm extends Form{
     }
 
     static load_form_vals(errors){
-        const form_keys = Object.keys(localStorage).filter(el => !errors.includes(el) && el != "token" )
+        const form_keys = this.needed_keys
         for(const key of form_keys){
             const form_item = form.querySelector(`#${key}`)
+            debugger
             form_item.value = localStorage.getItem(key)
         }
     }

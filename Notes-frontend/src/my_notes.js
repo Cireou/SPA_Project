@@ -52,11 +52,10 @@ class MyNotes extends MenuItem{
             if (user_info.topics.length == 0){this.load_empty_page()}
             for (let i = 0; i < user_info.topics.length; i+=3){
                 let row_div = ce("div")
-                row_div.className = "w3-row-padding"
                 row_div.style = "margin:0 -16px"
                 for (let j = 0; (j + i < user_info.topics.length && j < 3); j++){
                     let card_info = user_info.topics[i + j];
-                    let new_card = new MyNotesCard(card_info.id, card_info.color, card_info.title, null)
+                    let new_card = new MyNotesCard(card_info.id, card_info.color, card_info.title, card_info.img_url)
                     row_div.append(new_card.to_html())
                 }
                 AUTH_CONTAINER.append(row_div);

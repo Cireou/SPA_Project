@@ -31,7 +31,14 @@ body {font-family: "Lato", sans-serif}
 }
 #authenticated-container{
   display: none;
-  margin-left: 200px;
+  margin-left: 230px;
+  margin-right: 10px;
+  padding-top: 7px;
+}
+
+.row{
+  padding-top: 7px;
+  padding-bottom: 7px;
 }
 
 #full-card{
@@ -41,6 +48,16 @@ body {font-family: "Lato", sans-serif}
     bottom: 50%;
     top: 61px;
     height: 75%;
+}
+
+.card-cont{
+  border-radius: 10px;
+  display: inline-block;
+  padding: 5px;
+}
+
+h2.card-cont{
+  text-decoration: underline
 }
 
 .note-modal-card-cont{
@@ -71,6 +88,12 @@ body {font-family: "Lato", sans-serif}
   cursor: pointer;
 }
 
+.owner-div{
+  position: absolute; 
+  left: 40%;
+  top: 41%;
+  display: none;
+}
 .owner-div-item{
   display: inline-block;
 }
@@ -81,7 +104,7 @@ body {font-family: "Lato", sans-serif}
 }
 
 .fa-share-square-o{
-  right: 11px;
+  right: 39px;
   position: absolute;
   top: 14px;
 }
@@ -89,7 +112,7 @@ body {font-family: "Lato", sans-serif}
 #share-form{
   top: 35px;
   position: absolute;
-  right: 0px;
+  right: 33px;
 }
 
 #none-existwg-container.w3-container{

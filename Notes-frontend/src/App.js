@@ -76,7 +76,11 @@ const change_card_color = (args) => {
   const card = args.card;
   const new_color = args.color.toRgbString();
   card.style.backgroundColor = new_color;
-  card.style.color = getContrast(new_color)
+  card.style.color = getContrast(new_color);
+  [...card.parentElement.querySelectorAll(".card-cont")].forEach(item => {
+    item.style.backgroundColor = new_color
+    item.style.color = getContrast(new_color);
+  })
 }
 
 var spectrum_map = (args) => {
