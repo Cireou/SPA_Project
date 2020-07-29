@@ -47,11 +47,11 @@ class SectionsPage{
         sidebar.style = `display: block; background-color: ${opacity_color}`;
         sidebar.innerHTML = ""
         sidebar.innerHTML += `<div style = "color: ${getContrast(topic.color)}">
-                                <a href="#" class="w3-bar-item w3-button" style = "background-color:${topic.color};">
+                                <div class="w3-bar-item" style = "background-color:${topic.color};">
                                     <div class="w3-container w3-center ">
                                         <h3 id = "topic-title"></h3>
                                     </div>
-                                </a>
+                                </div>
                                 <div class= "section-list-container">
                                     <ul id = "section-list" class="w3-ul w3-card-4 w3-hoverable">
                                     </ul>
@@ -149,7 +149,7 @@ class Section{
         li.id = `li-section-${this.id}`;
         li.className = `w3-display-container w3-hover-${Section.base().hover_color}`;
         li.style.backgroundColor = Section.base().bg_color;
-        li.innerHTML = `<span class = "title">${this.title}</span>
+        li.innerHTML = `<div class = "title" style = " cursor: pointer;"> <span>${this.title}</span></div>
                         <span class = "w3-button w3-transparent w3-display-right">×</span>`;
         li.querySelector(".title").addEventListener("click", () => {
             if (SectionsPage.current_section()){
@@ -168,7 +168,7 @@ class Section{
         AUTH_CONTAINER.innerHTML = `
             <div id = "full-card">
                 <header class="w3-container w3-blue">
-                    <div id = "note-title" contentEditable = true> <h2> ${this.title} </h2>
+                    <div id = "note-title"> <h2 contentEditable = true> ${this.title} </h2>
                     </div>
                 </header>
                 <i id = "note-save-btn" class="fa fa-floppy-o"></i>

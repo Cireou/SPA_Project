@@ -10,7 +10,7 @@ class Form{
     static generate_form_input(label, placeholder, form_type){
         let p = ce("p");
             let p_label = ce("label");
-            p_label.innerText = label;
+            p_label.innerText = label.split("_").map(text_str => text_str[0].toUpperCase() + text_str.slice(1)).join(" ");
         p.append(p_label)
 
         let input = ce("input");
@@ -18,7 +18,6 @@ class Form{
         input.className= "w3-input w3-border";
         input.type = form_type;
         input.placeholder = placeholder;
-        
 
         form_inputs.prepend(p, input)
     }
@@ -51,6 +50,25 @@ class Form{
         }
         // !form.getAttribute('listener') ? form.setAttribute("listener", true): form.removeEventListener();
     }
+    static reset(){
+        for (const form_item of form.querySelectorAll("input:not([type='submit'])")){
+            $(`#${form_item.id}`).removeClass("error-text")
+            form_item.style.backgroundColor = "white";
+            form_item.style.color = "black";
+            form_item.placeholder = this.form_items[form_item.type][form_item.id]
+        }
+    }
+
+    static load_errors(error_map){
+        for(const error in error_map){
+            const form_item = qs(`#${error}`)
+            $(`#${error}`).addClass("error-text")
+            form_item.style.backgroundColor = "red";
+            form_item.style.color = "white";
+            const error_arr = error_map[error]
+            form_item.placeholder = error_arr[error_arr.length - 1][0].toUpperCase() + error_arr[error_arr.length - 1].slice(1) +  "."
+        }
+    }
 }
 
 class Signup_Form extends Form{
@@ -65,12 +83,12 @@ class Signup_Form extends Form{
 
     static form_items = {
         "password":{
-            "Password Confirmation": "Confirm your Password",
-            "Password": "Your New Password"
+            "password_confirmation": "Confirm your Password",
+            "password": "Your New Password"
         } ,
         "text":{
-            "Email": "Your Email!",
-            "Username": "Your Username"
+            "email": "Your Email!",
+            "username": "Your Username"
         }
     }
 
@@ -95,10 +113,12 @@ class Signup_Form extends Form{
                     clear_Listener("submit", Signup_Form.listener);
                     Welcome.redirect(AuthenticatedScreen.load);
                 } else {
-                    console.log("Signup")
                     form.reset()
+                    Signup_Form.reset()
+                    Signup_Form.load_errors(token)
                 } 
             })
+    
     }
     static load(){
         Form.load(Signup_Form.title, Signup_Form.form_items, Signup_Form.linker_map(), 
@@ -118,10 +138,10 @@ class Login_Form extends Form{
 
     static form_items = {
         "password":{
-            "Password": "Your Password"
+            "password": "Your Password"
         } ,
         "text":{
-            "Email": "Your Email!"
+            "email": "Your Email!"
         }
     }
 
@@ -143,8 +163,9 @@ class Login_Form extends Form{
                     clear_Listener("submit", Login_Form.listener);
                     Welcome.redirect(AuthenticatedScreen.load);
                 } else {
-                    console.log("Login")
                     form.reset();
+                    Login_Form.reset();
+                    Login_Form.load_errors({email: ["Incorrect email or email not registered"], password: ["Incorrect password or account not registered"]})
                 } 
             })
     }

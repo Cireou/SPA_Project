@@ -38,12 +38,12 @@ class EditForm extends Form{
 
     static form_items = {
         "password":{
-            "Password Confirmation": "Confirm your Password",
-            "Password": "Your New Password (Or Retype Old Password)"
+            "password_confirmation": "Confirm your Password",
+            "password": "Your New Password (Or Retype Old Password)"
         } ,
         "text":{
-            "Email": "Your Email!",
-            "Username": "Your Username!"
+            "email": "Your Email!",
+            "username": "Your Username!"
         }
     }
 
@@ -65,12 +65,28 @@ class EditForm extends Form{
         }
     }
 
+    static load_form_vals(errors){
+        const form_keys = Object.keys(localStorage).filter(el => !errors.includes(el) && el != "token" )
+        for(const key of form_keys){
+            const form_item = form.querySelector(`#${key}`)
+            form_item.value = localStorage.getItem(key)
+        }
+    }
+
     static listener(){
         event.preventDefault();
         fetch(users_url, reqObj("PATCH",  EditForm.data(event), localStorage.getItem("token")))
         .then(resp => resp.json())
         .then(JSON => {
-            modal_form.style.display = "none";
+            if (!JSON.error){
+                modal_form.style.display = "none";
+                localStorage.removeItem("username")
+                localStorage.removeItem("email")
+            }else{
+                form.reset()
+                EditForm.load_errors(JSON.error)
+                EditForm.load_form_vals(Object.keys(JSON))
+            }
         })
     }
 
@@ -83,6 +99,7 @@ class EditForm extends Form{
             const form_texts = EditForm.form_items.text
             for (const key in form_texts){
                 qs(`#${key}`).value = user_info[key.toLowerCase()]
+                localStorage.setItem(key, user_info[key.toLowerCase()])
             }
         })
     }

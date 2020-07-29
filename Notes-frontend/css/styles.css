@@ -1,5 +1,9 @@
 body {font-family: "Lato", sans-serif}
 .mySlides {display: none}
+
+.error-text::-webkit-input-placeholder{
+  color:white
+}
 .create-btn{
   z-index: 9999998;
   position: absolute;

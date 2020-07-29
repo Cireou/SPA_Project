@@ -25,7 +25,7 @@ class Card{
                                     <br>
                                     <br>
                                     <div class="w3-container w3-center">
-                                        <a href="#" id = "card-title-${this.id}" class="w3-xxlarge"></a>
+                                        <a href="#" id = "card-title-${this.id}" class="w3-xxlarge"> <h2 contentEditable = "false"> </h2></a>
                                     </div>
                                     <br> 
                                     <div class = "owner-div">
@@ -48,10 +48,9 @@ class Card{
                                 </div>  
                                 <div id = "share-container"></div>
                             </div>`
-        const card_title = third.querySelector(`#card-title-${this.id}`)
+        const card_title = third.querySelector(`#card-title-${this.id}`).querySelector("h2")
         card_title.innerText = this.title;
         card_title.addEventListener("click", this.section_listener.bind(this))
-        
         third.querySelector(`#card-edit-${this.id}`).addEventListener("click", () => {this.edit_loader(third.children[0])})
         return third;
     }
@@ -64,8 +63,8 @@ class Card{
         const item = qs(`#card-title-${this.id}`)
         const new_item = item.cloneNode(true);
         item.parentNode.replaceChild(new_item, item)
-        
-        qs(`#card-title-${this.id}`).contentEditable = "true";
+
+        new_item.querySelector("h2").contentEditable = "true"
         qs(`#card-${this.id}-btns`).style.display = "none";
 
         const temp_vals = ce("div")
@@ -105,7 +104,7 @@ class MyNotesCard extends Card{
         share_div.innerHTML = `<i class = "icons share_btn fa fa-share-square-o w3-xlarge"> </i>
                                 <div id="share-form" style= "display: none">
                                     <form>
-                                        <input type="text" name="search" placeholder="Share your note with other users! Separate multiple emails with commas!">
+                                        <input type="text" name="search" placeholder="Sharee's Email">
                                         <input type = "submit" value = "Share!">
                                     </form>
                                 </div>`
