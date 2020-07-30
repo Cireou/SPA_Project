@@ -25,8 +25,8 @@ class Card{
                                 <div id = "card-cont-${this.id}" class="w3-card-4 w3-hover-shadow w3-center w3-round-xlarge" 
                                         style="height: 370px; max-width: 420px;" >
                                     <div class="w3-container w3-center ">
-                                        <a href="#" id = "card-title-${this.id}" class="w3-xxlarge"> 
-                                            <h2 class = "card-cont" contentEditable = "false" style = "position: absolute; left: 35%; top: 10%;"> </h2>
+                                        <a href="#" id = "card-title-${this.id}" class="w3-xxlarge" style = "position: absolute; left: 35%; top: 10%;"> 
+                                            <h2 class = "card-cont" contentEditable = "false"> </h2>
                                         </a>
                                     </div> 
                                     <div class = "owner-div card-cont">
@@ -54,7 +54,7 @@ class Card{
                                 </div>  
                                 <div id = "share-container"></div>
                             </div>`;
-        third.querySelector(`#card-cont-${this.id}`).style.background= `${this.color} url(" ` + encodeURI(this.img_url) + '")'
+        third.querySelector(`#card-cont-${this.id}`).style.background= `${this.color} ` +  to_bg_image(this.img_url)
         third.querySelector(`#card-cont-${this.id}`).style.backgroundSize = "100% 100%"
         const card_title = third.querySelector(`#card-title-${this.id}`).querySelector("h2")
         card_title.innerText = this.title;
@@ -166,17 +166,21 @@ class MyNotesCard extends Card{
 
 class SharedNotesCard extends Card{
 
-    constructor(id, color, title, img_url, owner, sharee, share_id){
+    constructor(id, color, title, img_url, owner, owner_img, sharee, share_id){
         super(id, color, title, img_url, owner);
+        this.owner_img = owner_img;
         this.sharee = sharee;
         this.shared_topic_id = share_id
     }
     add_owner_div(container){
         const owner_div = container.querySelector(".owner-div")
         owner_div.style.display = "block"
-        owner_div.innerHTML =  `<i class="fa fa-user owner-div-item"></i> 
-                                <h2 class = "owner-div-item">  ${this.owner}</h2>`
+        owner_div.innerHTML =  `<div> 
+                                    <div id="owner_img" class="image-cropper" style = "float: left;"></div>
+                                    <h2 class = "owner-div-item" style="float:right">  ${this.owner}</h2>
+                                </div`
         owner_div.querySelector("h2").style = "margin: 0px 0;"
+        owner_div.querySelector("#owner_img").style.backgroundImage = to_bg_image(this.owner_img)
     }
 
     to_html(){
@@ -185,6 +189,7 @@ class SharedNotesCard extends Card{
         this.add_owner_div(third);
         third.querySelector(`#card-edit-${this.id}`).addEventListener("click", () => {
             this.edit_loader(third.children[0], SharedNotes)
+            qs(`#card-title-${this.id}`).style.top = "1%"
             qs("h2.card-cont").style.top = "0%";
             qs(".owner-div").style.top = "20%"
             qs("#temp-vals").style = "position: absolute; top: 37%; left: 7%"

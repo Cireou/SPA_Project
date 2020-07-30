@@ -24,6 +24,13 @@ body {font-family: "Lato", sans-serif}
 .mySlides{
   width:100%;
 }
+.image-cropper {
+  width: 48px;
+  height: 48px;
+  border-radius: 100%;
+  background: #eee no-repeat center;
+  background-size: cover;
+}
 
 #linker{
   text-align: center;
@@ -91,7 +98,7 @@ h2.card-cont{
 .owner-div{
   position: absolute; 
   left: 40%;
-  top: 41%;
+  top: 38%;
   display: none;
 }
 .owner-div-item{

@@ -1,10 +1,11 @@
+
 class UserMenu{
     static user_icon = () =>  qs("#user-btn");
     static create(){
         const right_nav = qs("#right-nav");
             right_nav.innerHTML += `
-            <div id = "user-btn" class="w3-dropdown-hover w3-hide-small w3-right">
-                <button class="w3-padding-large w3-button" title="User Settings"> <i class="fa fa-user"></i> <i class="fa fa-caret-down"></i> </button> 
+            <div id = "user-btn" class="w3-dropdown-hover w3-hide-small w3-right"">
+                <div id="usr_img" class="image-cropper"></div>
                 <div class="w3-dropdown-content w3-bar-block" style="right:0">
                     <div id = "edit-prof" class="w3-bar-item w3-button w3-grey" >Edit Profile</div>
                     <div id= "logout" class="w3-bar-item w3-button w3-grey">Logout</div>
@@ -19,6 +20,9 @@ class UserMenu{
                 localStorage.clear();
                 AuthenticatedScreen.redirect(Welcome.load);
             }
+            fetch(users_url, reqObj("GET", null, getToken()))
+            .then(resp => resp.json())
+            .then(user_info => qs("#usr_img").style.backgroundImage = to_bg_image(user_info.image_url))
     }
 
     static hide(){
@@ -43,6 +47,7 @@ class EditForm extends Form{
             "password": "Your New Password (Or Retype Old Password)"
         } ,
         "text":{
+            "image_url": "New Image URL!",
             "email": "Your Email!",
             "username": "Your Username!"
         }
@@ -51,18 +56,18 @@ class EditForm extends Form{
     static destroyer_listener(){
         fetch(users_url, reqObj("DELETE", null, getToken()))
         .then(values => {
-            $()
             AuthenticatedScreen.redirect(Welcome.load)
         })
     }
 
     static data(event){ 
-        const new_pass = event.target[2].value;
-        const new_pass_conf = event.target[3].value
+        const new_pass = event.target[3].value;
+        const new_pass_conf = event.target[4].value
         return {
             users:{
                 username: event.target[0].value,
                 email: event.target[1].value,
+                image_url: event.target[2].value,
                 ...(new_pass!="" && {password: new_pass}),
                 ...(new_pass_conf!="" && {password_confirmation: new_pass_conf})
             }
@@ -73,7 +78,6 @@ class EditForm extends Form{
         const form_keys = this.needed_keys
         for(const key of form_keys){
             const form_item = form.querySelector(`#${key}`)
-            debugger
             form_item.value = localStorage.getItem(key)
         }
     }
@@ -85,6 +89,7 @@ class EditForm extends Form{
         .then(JSON => {
             if (!JSON.error){
                 modal_form.style.display = "none";
+                qs("#usr_img").style.backgroundImage = to_bg_image(JSON.image_url);
                 localStorage.removeItem("username")
                 localStorage.removeItem("email")
             }else{

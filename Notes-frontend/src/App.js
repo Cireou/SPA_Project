@@ -5,6 +5,7 @@ const ce = (item) => document.createElement(item);
 //Existing NAVBAR
 const NAVBAR = qs("#nav-bar");
 const HOME_BTN = qs("#home-btn")
+const IMG_URL = "./Images/person-icon.png"
 
 //Body
 const block_1 = qs("#block-1");
@@ -68,7 +69,10 @@ const clear_Listener = (action, oldListener) => {
   form.removeEventListener(action, oldListener)
 }
 
-
+//Convert images to allow for background images:
+const to_bg_image = (url) => {
+  return `url("` + encodeURI(url) + '")'
+}
 //Color Functions
 var rbg_array = (str) => [...str.matchAll(/\d{1,3}/g)].map(item => parseInt(item[0], 10))
 
