@@ -23,7 +23,7 @@ class New_Note_Modal{
         })
     }
     static add_listeners(){
-        $("#colorpicker").spectrum(spectrum_map({color: this.color, card: qs("#note-modal-card")}));
+        $("#colorpicker").spectrum(spectrum_map({color: this.color || "rgb(100, 100, 100)", card: qs("#note-modal-card")}));
         qs("#note-submit").addEventListener("click", this.submit_listener)
     }
 }

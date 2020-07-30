@@ -75,7 +75,8 @@ body {font-family: "Lato", sans-serif}
 }
 
 h2.card-cont{
-  text-decoration: underline
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .note-modal-card-cont{
@@ -108,7 +109,7 @@ h2.card-cont{
 
 .owner-div{
   position: absolute; 
-  left: 40%;
+  left: 38%;
   top: 38%;
   display: none;
 }

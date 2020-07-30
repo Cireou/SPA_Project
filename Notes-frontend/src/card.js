@@ -24,10 +24,10 @@ class Card{
         third.innerHTML = `<div style = "position: relative; color: ${getContrast(this.color)};"> 
                                 <div id = "card-cont-${this.id}" class="w3-card-4 w3-hover-shadow w3-center w3-round-xlarge" 
                                         style="height: 370px; max-width: 420px;" >
-                                    <div class="w3-container w3-center ">
-                                        <a href="#" id = "card-title-${this.id}" class="w3-xxlarge" style = "position: absolute; left: 40%; top: 10%;"> 
+                                    <div class="w3-container w3-center " style = "position: absolute; top: 10%; width: 100%">
+                                        <div id = "card-title-${this.id}" class="w3-xxlarge"> 
                                             <h2 class = "card-cont" contentEditable = "false"> </h2>
-                                        </a>
+                                        </div>
                                     </div> 
                                     <div class = "owner-div card-cont">
                                     </div>
@@ -36,7 +36,7 @@ class Card{
                                         <div class="w3-row w3-padding-16">
                                             <div class="w3-half " >
                                                 <h2>
-                                                    <i id="card-edit-${this.id}" class=" card-cont fa fa-pencil-square-o 
+                                                    <i id="card-edit-${this.id}" class=" icons card-cont fa fa-pencil-square-o 
                                                         w3-xxlarge w3-hover w3-hover-text-green"
                                                         style = "position: absolute; left: 25%; bottom: 14%"
                                                     ></i>
@@ -44,7 +44,7 @@ class Card{
                                             </div>
                                             <div class="w3-half">
                                                 <h2>
-                                                    <i id="card-delete-${this.id}" class="card-cont fa fa-trash-o w3-xxlarge w3-hover w3-hover-text-red"
+                                                    <i id="card-delete-${this.id}" class="icons card-cont fa fa-trash-o w3-xxlarge w3-hover w3-hover-text-red"
                                                     style = "position: absolute; right: 25%; bottom: 14%"
                                                     ></i>
                                                 </h2>
@@ -224,7 +224,7 @@ class SharedNotesCard extends Card{
     add_owner_div(container){
         const owner_div = container.querySelector(".owner-div")
         owner_div.style.display = "block"
-        owner_div.innerHTML =  `<div> 
+        owner_div.innerHTML =  `<div > 
                                     <div id="owner_img" class="image-cropper" style = "float: left;"></div>
                                     <h2 class = "owner-div-item" style="float:right">  ${this.owner}</h2>
                                 </div`
@@ -238,10 +238,10 @@ class SharedNotesCard extends Card{
         this.add_owner_div(third);
         third.querySelector(`#card-edit-${this.id}`).addEventListener("click", () => {
             this.edit_loader(third.children[0], SharedNotes)
-            qs(`#card-title-${this.id}`).style.top = "1%"
+            qs(`#card-title-${this.id}`).parentElement.style.top = "1%"
             qs("h2.card-cont").style.top = "0%";
             qs(".owner-div").style.top = "20%"
-            qs("#temp-vals").style = "position: absolute; top: 37%; left: 7%"
+            qs("#temp-vals").style = "position: absolute; top: 37%; width: 100%"
         })
 
         third.querySelector(`#card-delete-${this.id}`).addEventListener("click", this.delete_loader.bind(this))
