@@ -20,7 +20,8 @@ const NO_SECTION_HTML = `<div id = "none-existing-container" class="w3-container
 
 //Modals
 const modal_form = qs('#form-modal');
-const modal_note = qs("#note-modal")
+const modal_note = qs("#note-modal");
+const share_modal = qs("#share-modal");
 
 //Token Retrieval
 const getToken = () => localStorage.getItem("token");
@@ -58,7 +59,13 @@ window.onclick = function(event) {
     modal_form.style.display = "none";
   } else if (event.target == modal_note){
     modal_note.style.display = 'none';
-  } 
+  } else if (event.target == share_modal){
+    share_modal.style.display = 'none';
+    const input = qs("#share-form").querySelector("input")
+    input.className = "w3-border";
+    input.style.backgroundColor = "white"
+    input.placeholder = "Email of Sharee!"
+  }
 }
 
 const clear_Listener = (action, oldListener) => {

@@ -4,6 +4,18 @@ body {font-family: "Lato", sans-serif}
 .error-text::-webkit-input-placeholder{
   color:white
 }
+#menu-outer {
+  height: auto;
+  padding: 20px;
+}
+.table {
+	margin: 0 auto;
+}
+
+#horizontal-list li {
+		display: inline;
+}
+  
 .create-btn{
   z-index: 9999998;
   position: absolute;
@@ -38,14 +50,13 @@ body {font-family: "Lato", sans-serif}
 }
 #authenticated-container{
   display: none;
-  margin-left: 230px;
-  margin-right: 10px;
+  margin-left: 215px;
+  margin-right: 15px;
   padding-top: 7px;
 }
 
 .row{
-  padding-top: 7px;
-  padding-bottom: 7px;
+  padding: 7px
 }
 
 #full-card{
@@ -114,12 +125,6 @@ h2.card-cont{
   right: 39px;
   position: absolute;
   top: 14px;
-}
-
-#share-form{
-  top: 35px;
-  position: absolute;
-  right: 33px;
 }
 
 #none-existwg-container.w3-container{

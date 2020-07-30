@@ -111,6 +111,33 @@
     <button type = "button" class="w3-button w3-red w3-section" onclick="document.getElementById('note-modal').style.display='none'">Close <i class="fa fa-remove"></i></button>
     </div>
   </div>
+</div>
+
+ <!-- Share Modal -->
+   <div id="share-modal" class="w3-modal">
+    <div class="w3-modal-content w3-animate-opacity w3-card-4">
+      <header class="w3-container w3-teal w3-center w3-padding-32"> 
+        <span onclick="document.getElementById('share-modal').style.display='none'" 
+       class="w3-button w3-teal w3-xlarge w3-display-topright">×</span>
+        <h2 class="w3-wide"> Share your Note!</h2>
+      </header>
+        <form id= "share-form" class = "w3-container w3-padding">
+          <input type="text" class = "w3-border" style = "width: 92%; height: 40px"; placeholder="Email of Sharee!" name="search">
+          <button type="submit">Share!</button>
+          </form>
+        </form>
+      <div class = "w3-container w3-teal w3-center w3-padding">
+        <h4 class="w3-wide"> Currently Shared Users</h4>
+      </div>
+      <div id="menu-outer">
+        <div class="table">
+          <ul id="horizontal-list">
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
     <script src = "src/App.js"></script>
     <script src = "src/sidebar.js"></script>
     <script src = "src/script.js"></script>

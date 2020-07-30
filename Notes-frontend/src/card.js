@@ -25,7 +25,7 @@ class Card{
                                 <div id = "card-cont-${this.id}" class="w3-card-4 w3-hover-shadow w3-center w3-round-xlarge" 
                                         style="height: 370px; max-width: 420px;" >
                                     <div class="w3-container w3-center ">
-                                        <a href="#" id = "card-title-${this.id}" class="w3-xxlarge" style = "position: absolute; left: 35%; top: 10%;"> 
+                                        <a href="#" id = "card-title-${this.id}" class="w3-xxlarge" style = "position: absolute; left: 40%; top: 10%;"> 
                                             <h2 class = "card-cont" contentEditable = "false"> </h2>
                                         </a>
                                     </div> 
@@ -108,6 +108,37 @@ class Card{
     }
 }
 
+class ShareItem{
+    constructor(args){
+        this.id = args.id
+        this.email = args.email;
+    }
+
+
+
+    to_html(){
+        const div = ce("div")
+        div.style = 'padding-left: 5px; padding-right: 5px'
+        const li = ce("li");
+        li.className = "w3-display-container w3-border w3-round"
+        li.innerHTML = `<div style = "display: inline-block;"> ${this.email}</div><span class="w3-button">×</span>`
+        li.style = `background-color: #6a6aec; border-color: yellow; color: white; padding-bottom: 14px; padding-left:14px; padding-top: 10px; border: 5px"`
+        div.append(li)
+        li.querySelector("span").addEventListener("click", () => {
+            //Send DELETE REQUEST to UserSharedTopics
+            fetch(shared_topics_url + `/${this.id}`, reqObj("DELETE", null, getToken()))
+            .then(resp => qs("#horizontal-list").removeChild(li))
+        })
+        return li;
+    }
+
+    static add_to_list(email_arr){
+        email_arr.forEach(email => {
+            const item = new ShareItem({id: email.id, email: email.email});
+            qs("#horizontal-list").append(item.to_html());
+        })
+    }
+}
 class MyNotesCard extends Card{
     to_html(){
         const third = super.to_html();
@@ -123,39 +154,57 @@ class MyNotesCard extends Card{
 
     add_share_listener(card){
         const share_div = card.querySelector("#share-container")
-        share_div.innerHTML = `<i class = "icons share_btn card-cont fa fa-share-square-o w3-xlarge"> </i>
-                                <div id="share-form" style= "display: none">
-                                    <form>
-                                        <input type="text" name="search" placeholder="Sharee's Email">
-                                        <input type = "submit" value = "Share!">
-                                    </form>
-                                </div>`
+        share_div.innerHTML = `<i class = "icons share_btn card-cont fa fa-share-square-o w3-xlarge"> </i>`
         
         share_div.querySelector(".icons").addEventListener("click", () => {
-            this.share_listener(this, share_div.querySelector("#share-form"))
+            qs("#share-modal").style.display = "block";
+            this.reset()
+            const share_form = qs("#share-form");
+            const copy = share_form.cloneNode(true);
+            share_form.parentNode.replaceChild(copy, share_form);
+
+            copy.addEventListener("submit", this.share_form_listener.bind(this))
+            //Make Get request to topics, load the topic
+            qs("#horizontal-list").innerHTML = "";
+            fetch(topics_url + `/${this.id}`, reqObj("GET", null, getToken()))
+            .then(resp => resp.json())
+            .then(shared_topic => {
+               const topic_arr = shared_topic.sharees.map(sharee => ({id: sharee.id, email: sharee.email}));
+               ShareItem.add_to_list(topic_arr)
+            })
         })
     }
 
-    share_listener(card, share_form){
-        if (share_form.style.display == "none"){
-            share_form.style.display = "block"
-            const submit_btn = share_form.querySelector("input[type='submit']");
-            share_form.addEventListener("submit", () => {this.share_form_listener(card, share_form)})
-        } else {
-            share_form.style.display = "none";
-        }
-    }
-
-    share_form_listener(card, form){
+    share_form_listener(){
         event.preventDefault()
         fetch(shared_topics_url, reqObj("POST", {
-            shared_topic_id: card.id,
+            shared_topic_id: this.id,
             sharee_email: event.target[0].value
         }, getToken()))
         .then(resp => resp.json())
         .then(info => {
-            form.style.display = "none"
+            qs("#share-form").reset()
+            if (!info.errors){
+                this.reset()
+                ShareItem.add_to_list([{id: info.id, email: info.sharee.email}])
+            } else{
+                this.load_error()
+            }
         })
+    }
+
+    reset(){
+        const input = qs("#share-form").querySelector("input")
+        input.className = "w3-border";
+        input.style.backgroundColor = "white"
+        input.placeholder = "Email of Sharee!"
+    }
+
+    load_error(){
+        const input = qs("#share-form").querySelector("input")
+        input.className = " error-text"
+        input.style.backgroundColor = "red"
+        input.placeholder = "User already has been shared!"
     }
     delete_loader(){
         fetch(topics_url + `/${this.id}`, reqObj("DELETE", null, getToken()))
